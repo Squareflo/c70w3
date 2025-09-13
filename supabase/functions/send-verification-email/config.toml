@@ -1,0 +1,2 @@
+[net_permissions]
+allow_net = ["api.resend.com"]
