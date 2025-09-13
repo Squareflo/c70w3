@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
+  const location = useLocation();
+  const isSignInPage = location.pathname === '/sign-in';
+  
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
@@ -19,10 +22,10 @@ export const Navbar = () => {
               Contact Us
             </Link>
             <Link 
-              to="/sign-in" 
+              to={isSignInPage ? "/sign-up" : "/sign-in"} 
               className="h-9 w-24 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal"
             >
-              Sign In
+              {isSignInPage ? "Sign Up" : "Sign In"}
             </Link>
           </div>
         </div>
