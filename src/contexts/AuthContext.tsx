@@ -47,6 +47,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Ensure a profile row exists for the authenticated user
+  const ensureProfile = async (u: User) => {
+    try {
+      const { data: existing, error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', u.id)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('Error checking profile:', checkError);
+        return;
+      }
+
+      if (!existing) {
+        const meta = (u as any).user_metadata || {};
+        const { error: insertError } = await supabase.from('profiles').insert({
+          user_id: u.id,
+          email: u.email,
+          first_name: meta.first_name ?? null,
+          last_name: meta.last_name ?? null,
+          city: meta.city ?? null,
+          phone_number: meta.phone_number ?? null,
+        });
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+        }
+      }
+    } catch (e) {
+      console.error('Unexpected error ensuring profile:', e);
+    }
+  };
+
+  // When the auth user is available, ensure their profile exists
+  useEffect(() => {
+    if (!loading && user) {
+      setTimeout(() => ensureProfile(user), 0);
+    }
+  }, [user, loading]);
+
   const signUp = async (email: string, password: string, firstName: string, lastName: string, city: string, phoneNumber: string) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
