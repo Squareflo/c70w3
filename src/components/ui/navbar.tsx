@@ -59,7 +59,7 @@ export const Navbar = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-80 sm:w-80">
                 <SheetHeader>
-                  <SheetTitle className="text-left">Menu</SheetTitle>
+                  <SheetTitle className="text-left opacity-0">Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-4 mt-6">
                   {navigationItems.map((item) => (
