@@ -49,7 +49,7 @@ export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
   
   const { width, height } = sizeMap[size];
   
-  // Replace 'chowlocal-logo' with your actual logo's public ID in Cloudinary
+  // Uses the chowlocal-logo public ID from Cloudinary
   return getOptimizedImageUrl('chowlocal-logo', { 
     width, 
     height, 

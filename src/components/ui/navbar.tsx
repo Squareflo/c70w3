@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getLogoUrl } from "@/lib/cloudinary";
+import { getOptimizedImageUrl } from "@/lib/cloudinary";
 import {
   Sheet,
   SheetContent,
@@ -29,7 +29,7 @@ export const Navbar = () => {
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
             <img 
               alt="ChowLocal" 
-              src="https://chowlocal.com/x/assets/images/chowlocallogo.png"
+              src={getOptimizedImageUrl('chowlocal-logo', { width: 64, height: 64, quality: 'auto', format: 'auto' })}
               className="w-12 md:w-16" 
             />
           </div>

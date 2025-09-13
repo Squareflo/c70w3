@@ -61,7 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <img src="https://chowlocal.com/x/assets/images/chowlocallogo.png" alt="ChowLocal" style="width: 80px; height: auto;">
+            <img src="https://res.cloudinary.com/${Deno.env.get('CLOUDINARY_CLOUD_NAME') || 'demo'}/image/upload/w_80,h_80,q_auto,f_auto/chowlocal-logo" alt="ChowLocal" style="width: 80px; height: auto;">
           </div>
           
           <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Verify Your Email Address</h1>

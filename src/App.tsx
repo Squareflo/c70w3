@@ -10,6 +10,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import SignUpSuccess from "./pages/SignUpSuccess";
 import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
+import UploadLogo from "./pages/UploadLogo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/signup-success" element={<SignUpSuccess />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/upload-logo" element={<UploadLogo />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
