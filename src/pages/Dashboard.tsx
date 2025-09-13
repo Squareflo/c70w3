@@ -120,10 +120,10 @@ const Dashboard = () => {
         <div className="w-full border-b-2 border-gray-200"></div>
         <div className="bg-gray-50 flex overflow-x-hidden">
           {/* Sidebar */}
-          <div className="bg-white md:w-64 md:flex-col lg:flex hidden">
+          <div className="bg-white md:w-64 md:flex-col custom:flex hidden">
             <div className="h-full pt-5 flex-col flex overflow-y-auto">
               <div className="bg-white w-1/4">
-                <div className="bg-white lg:flex md:w-64 md:flex-col hidden">
+                <div className="bg-white custom:flex md:w-64 md:flex-col hidden">
                   <div className="h-full pt-0 flex-col flex overflow-y-auto">
                     {/* User Profile Section */}
                     <div className="mt-0 py-3 px-2 mb-4 bg-white border-b border-slate-200">
