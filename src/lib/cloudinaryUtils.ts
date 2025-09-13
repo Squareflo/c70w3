@@ -1,110 +1,73 @@
-import { Link, useLocation } from "react-router-dom";
-import { Menu } from "lucide-react";
-import { useState } from "react";
-import { getLogoUrl } from "@/lib/cloudinary";
-import { getLogoUrl } from "@/lib/cloudinaryUtils";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
+// Cloudinary configuration and utility functions
+const CLOUDINARY_CLOUD_NAME = 'chowlocal';
+const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset'; // You'll need to set this up in Cloudinary
 
-export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
-  const location = useLocation();
-  const isSignInPage = location.pathname === "/sign-in";
-  
-  const navigationItems = [
-    { label: "Home", path: "/" },
-    { label: "About", path: "/about" },
-    { label: "Contact", path: "/contact" }
-  ];
-
-  return (
-    <div className="bg-white pt-4 pr-8 pb-4 pl-8">
-      <nav className="w-full">
-        <div className="w-full justify-between mt-auto mr-auto mb-auto ml-auto md:flex-row flex max-w-screen-2xl">
-          <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
-            {logoError ? (
-              <div className="w-12 md:w-16 h-12 md:h-16 flex items-center justify-center bg-red-600 text-white font-bold rounded">
-                Logo
-              </div>
-            ) : (
-              <img 
-                alt="ChowLocal" 
-                src={getLogoUrl('medium')}
-                className="w-12 md:w-16" 
-                onError={() => {
-                  console.error('Logo failed to load from Cloudinary');
-                  setLogoError(true);
-                }}
-              />
-            )}
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="bg-white justify-end items-center md:flex flex flex-row flex-wrap hidden">
-            {navigationItems.map((item) => (
-              <Link 
-                key={item.label}
-                to={item.path} 
-                className="text-gray-600 text-center mr-6 font-medium text-base font-raleway"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link 
-              to={isSignInPage ? "/sign-up" : "/sign-in"} 
-              className="h-9 w-24 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal"
-            >
-              {isSignInPage ? "Sign Up" : "Sign In"}
-            </Link>
-          </div>
-
-          {/* Mobile Navigation */}
-          <div className="md:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
-                  <Menu className="h-6 w-6 text-gray-600" />
-                  <span className="sr-only">Open menu</span>
-                </button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-80 sm:w-80">
-                <SheetHeader>
-                  <SheetTitle className="text-left opacity-0">Menu</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col space-y-4 mt-6">
-                  {navigationItems.map((item) => (
-                    <SheetClose key={item.label} asChild>
-                      <Link 
-                        to={item.path}
-                        className="text-gray-600 hover:text-gray-900 font-medium text-lg py-2 px-4 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    </SheetClose>
-                  ))}
-                  <div className="pt-4 border-t">
-                    <SheetClose asChild>
-                      <Link 
-                        to={isSignInPage ? "/sign-up" : "/sign-in"} 
-                        className="w-full h-12 text-white bg-red-600 hover:bg-red-700 border-2 flex items-center justify-center text-center border-red-600 rounded-lg text-base font-medium transition-colors"
-                      >
-                        {isSignInPage ? "Sign Up" : "Sign In"}
-                      </Link>
-                    </SheetClose>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </nav>
-    </div>
-  );
+export interface CloudinaryResponse {
+  secure_url: string;
+  public_id: string;
+  width: number;
+  height: number;
+  format: string;
 }
+
+// Generate logo URL with fallback
+export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
+  const dimensions = {
+    small: { w: 32, h: 32 },
+    medium: { w: 64, h: 64 },
+    large: { w: 128, h: 128 }
+  };
+
+  const { w, h } = dimensions[size];
+  
+  try {
+    // Try to load from Cloudinary first
+    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${w},h_${h},q_auto,f_auto/chowlocal-logo`;
+  } catch (error) {
+    console.error('Error generating Cloudinary URL:', error);
+    return createFallbackLogo(w, h);
+  }
+};
+
+// Create a reliable SVG fallback logo
+export const createFallbackLogo = (width: number = 64, height: number = 64) => {
+  const svg = `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${width}" height="${height}" fill="#dc2626" rx="8"/>
+      <text x="50%" y="50%" text-anchor="middle" dy="0.35em" fill="white" font-family="Arial, sans-serif" font-size="${Math.round(width * 0.3)}" font-weight="bold">
+        LOGO
+      </text>
+    </svg>
+  `;
+  
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
+
+// Upload image to Cloudinary
+export const uploadToCloudinary = async (file: File, folder: string = 'chowlocal'): Promise<CloudinaryResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', folder);
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    console.error('Cloudinary upload failed:', response.status, errorData);
+    throw new Error(`Upload failed: ${response.status} - ${errorData}`);
+  }
+
+  return response.json();
+};
+
+// Check if Cloudinary is configured
+export const isCloudinaryConfigured = () => {
+  return !!(CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET !== 'unsigned_preset');
+};
