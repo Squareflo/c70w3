@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { getLogoUrl } from "@/lib/cloudinary";
+import { getLogoUrl } from "@/lib/cloudinary";
 import {
   Sheet,
   SheetContent,
@@ -11,18 +12,6 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-export const Navbar = () => {
-  const location = useLocation();
-  const isSignInPage = location.pathname === '/sign-in';
-  const [isOpen, setIsOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
-  
-  const navigationItems = [
-    { label: "Home", path: "/" },
-    { label: "Add A Restaurant", path: "/" },
-    { label: "Contact Us", path: "/" },
-  ];
-  
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
@@ -37,6 +26,11 @@ export const Navbar = () => {
                 alt="ChowLocal" 
                 src={getLogoUrl('medium')}
                 className="w-12 md:w-16" 
+                onError={() => {
+                  console.error('Logo failed to load from Cloudinary');
+                  setLogoError(true);
+                }}
+              />
                 onError={() => {
                   console.error('Logo failed to load from Cloudinary');
                   setLogoError(true);
