@@ -42,6 +42,8 @@ export const Navbar = () => {
                   setLogoError(true);
                 }}
               />
+            )
+            }
           </div>
           
           {/* Desktop Navigation */}
