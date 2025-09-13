@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
 import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
   id: string;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null;
-  phone_number: string | null;
-  city: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  city: string;
 }
 
 const Dashboard = () => {
@@ -35,24 +36,35 @@ const Dashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load profile data.",
-          variant: "destructive",
+      if (!user?.uid) return;
+      
+      const profileDoc = await getDoc(doc(db, 'profiles', user.uid));
+      
+      if (profileDoc.exists()) {
+        const data = profileDoc.data();
+        setProfile({
+          id: user.uid,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          city: data.city,
         });
       } else {
-        setProfile(data);
+        console.log('No profile found');
+        toast({
+          title: "Error",
+          description: "Profile not found.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load profile data.",
+        variant: "destructive",
+      });
     } finally {
       setProfileLoading(false);
     }
@@ -111,7 +123,7 @@ const Dashboard = () => {
                         </div>
                         <div className="mr-auto ml-0">
                           <p className="font-bold text-base">
-                            {profile?.first_name} {profile?.last_name}
+                            {profile?.firstName} {profile?.lastName}
                           </p>
                           <p className="text-xs text-gray-500">{profile?.email}</p>
                         </div>
@@ -172,7 +184,7 @@ const Dashboard = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Welcome!</h3>
                   <p className="text-gray-600">
-                    Hello {profile?.first_name}! Welcome to your dashboard.
+                    Hello {profile?.firstName}! Welcome to your dashboard.
                   </p>
                 </div>
                 
@@ -181,7 +193,7 @@ const Dashboard = () => {
                   <div className="space-y-2 text-sm text-gray-600">
                     <p><span className="font-medium">Email:</span> {profile?.email}</p>
                     <p><span className="font-medium">City:</span> {profile?.city}</p>
-                    <p><span className="font-medium">Phone:</span> {profile?.phone_number}</p>
+                    <p><span className="font-medium">Phone:</span> {profile?.phoneNumber}</p>
                   </div>
                 </div>
                 

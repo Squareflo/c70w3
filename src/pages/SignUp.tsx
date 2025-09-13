@@ -49,10 +49,10 @@ const SignUp = () => {
         });
       } else {
         toast({
-          title: "Verification Email Sent",
-          description: "Please check your email for the verification code.",
+          title: "Success",
+          description: "Account created successfully!",
         });
-        navigate('/verify-email', { state: { email: formData.email } });
+        navigate('/dashboard');
       }
     } catch (error) {
       toast({
