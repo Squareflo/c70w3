@@ -98,8 +98,7 @@ const SignIn = () => {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ fontFamily: 'Arial' }}
-                className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-raleway"
               >
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>

@@ -9,13 +9,13 @@ export const Navbar = () => {
             <img alt="ChowLocal" src="https://chowlocal.com/x/assets/images/chowlocallogo.png" className="w-12 md:w-16" />
           </div>
           <div className="bg-white justify-end items-center md:flex flex flex-row flex-wrap hidden">
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base" style={{fontFamily: 'Raleway'}}>
+            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
               Home
             </Link>
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base" style={{fontFamily: 'Raleway'}}>
+            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
               Add A Restaurant
             </Link>
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base" style={{fontFamily: 'Raleway'}}>
+            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
               Contact Us
             </Link>
             <Link 

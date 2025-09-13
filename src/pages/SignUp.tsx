@@ -157,8 +157,7 @@ const SignUp = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  style={{ fontFamily: 'Arial' }}
-                  className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-raleway"
                 >
                   {loading ? 'Creating Account...' : 'Create Account'}
                 </button>

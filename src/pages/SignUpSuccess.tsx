@@ -41,8 +41,7 @@ const SignUpSuccess = () => {
           <div className="space-y-4">
             <button
               onClick={() => navigate('/sign-in')}
-              style={{ fontFamily: 'Arial' }}
-              className="p-3 w-full bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="p-3 w-full bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-raleway"
             >
               Sign In to Your Account
             </button>

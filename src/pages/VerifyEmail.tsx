@@ -84,8 +84,7 @@ const VerifyEmail = () => {
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                style={{ fontFamily: 'Arial' }}
-                className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-raleway"
               >
                 {loading ? 'Verifying...' : 'Verify Email'}
               </button>

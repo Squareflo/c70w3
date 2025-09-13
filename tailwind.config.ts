@@ -58,6 +58,12 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        'montserrat': ['Montserrat', 'sans-serif'],
+        'nanum': ['Nanum Gothic', 'sans-serif'],
+        'nunito': ['Nunito Sans', 'sans-serif'],
+        'raleway': ['Raleway', 'sans-serif'],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
