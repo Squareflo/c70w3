@@ -12,6 +12,18 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
+export default function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+  const location = useLocation();
+  const isSignInPage = location.pathname === "/sign-in";
+  
+  const navigationItems = [
+    { label: "Home", path: "/" },
+    { label: "About", path: "/about" },
+    { label: "Contact", path: "/contact" }
+  ];
+
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
