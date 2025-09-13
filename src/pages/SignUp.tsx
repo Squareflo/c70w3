@@ -4,6 +4,7 @@ import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { CityAutocomplete } from '@/components/ui/city-autocomplete';
+import { CityAutocomplete } from '@/components/ui/city-autocomplete';
 import { supabase } from '@/integrations/supabase/client';
 
 const SignUp = () => {
@@ -142,14 +143,11 @@ const SignUp = () => {
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
                   required
                 />
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="City"
+                <CityAutocomplete
                   value={formData.city}
-                  onChange={handleInputChange}
+                  onChange={(city) => setFormData(prev => ({ ...prev, city }))}
+                  placeholder="City"
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
-                  required
                 />
                 <input
                   type="email"
