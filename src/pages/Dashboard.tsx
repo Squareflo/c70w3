@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
 import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { db } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
@@ -36,19 +35,32 @@ const Dashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      if (!user?.uid) return;
+      if (!user?.id) return;
       
-      const profileDoc = await getDoc(doc(db, 'profiles', user.uid));
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
       
-      if (profileDoc.exists()) {
-        const data = profileDoc.data();
+      if (error) {
+        console.error('Error fetching profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (profileData) {
         setProfile({
-          id: user.uid,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          city: data.city,
+          id: profileData.id,
+          firstName: profileData.first_name || '',
+          lastName: profileData.last_name || '',
+          email: profileData.email || '',
+          phoneNumber: profileData.phone_number || '',
+          city: profileData.city || '',
         });
       } else {
         console.log('No profile found');
