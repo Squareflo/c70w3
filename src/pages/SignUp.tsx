@@ -142,11 +142,14 @@ const SignUp = () => {
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
                   required
                 />
-                <CityAutocomplete
-                  value={formData.city}
-                  onChange={(value) => setFormData(prev => ({ ...prev, city: value }))}
+                <input
+                  type="text"
+                  name="city"
                   placeholder="City"
+                  value={formData.city}
+                  onChange={handleInputChange}
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
+                  required
                 />
                 <input
                   type="email"
