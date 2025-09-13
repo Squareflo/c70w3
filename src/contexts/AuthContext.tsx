@@ -47,6 +47,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Generate a random avatar using the API
+  const generateAvatar = async (): Promise<string> => {
+    try {
+      // Generate a random username for the avatar
+      const randomUsername = Math.random().toString(36).substring(2, 15);
+      const avatarUrl = `https://avatar-placeholder.iran.liara.run/document?username=${randomUsername}`;
+      return avatarUrl;
+    } catch (error) {
+      console.error('Error generating avatar:', error);
+      // Fallback to a default avatar URL
+      return `https://avatar-placeholder.iran.liara.run/document?username=user`;
+    }
+  };
+
   // Ensure a profile row exists for the authenticated user
   const ensureProfile = async (u: User) => {
     try {
@@ -63,6 +77,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!existing) {
         const meta = (u as any).user_metadata || {};
+        const avatarUrl = await generateAvatar();
+        
         const { error: insertError } = await supabase.from('profiles').insert({
           user_id: u.id,
           email: u.email,
@@ -70,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           last_name: meta.last_name ?? null,
           city: meta.city ?? null,
           phone_number: meta.phone_number ?? null,
+          avatar_url: avatarUrl,
         });
         if (insertError) {
           console.error('Error creating profile:', insertError);

@@ -13,6 +13,7 @@ interface UserProfile {
   email: string;
   phoneNumber: string;
   city: string;
+  avatarUrl?: string;
 }
 
 const Dashboard = () => {
@@ -62,6 +63,7 @@ const Dashboard = () => {
           email: profileData.email || '',
           phoneNumber: profileData.phone_number || '',
           city: profileData.city || '',
+          avatarUrl: profileData.avatar_url || '',
         });
       } else {
         console.log('No profile found');

@@ -7,6 +7,7 @@ interface UserProfile {
   email: string;
   phoneNumber: string;
   city: string;
+  avatarUrl?: string;
 }
 
 interface SidebarNavProps {
@@ -27,7 +28,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ profile, onSignOut }) =>
                   <div className="w-fit rounded-full mr-3 relative">
                     <img 
                       alt="User Avatar" 
-                      src="https://static01.nyt.com/images/2019/11/08/world/08quebec/08quebec-superJumbo.jpg" 
+                      src={profile?.avatarUrl || "https://avatar-placeholder.iran.liara.run/document?username=user"} 
                       className="object-cover h-10 w-10 rounded-full"
                     />
                   </div>
