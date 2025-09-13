@@ -59,6 +59,7 @@ export default {
         },
       },
       fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
         'montserrat': ['Montserrat', 'sans-serif'],
         'nanum': ['Nanum Gothic', 'sans-serif'],
         'nunito': ['Nunito Sans', 'sans-serif'],
