@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/ui/navbar';
+import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -54,8 +54,7 @@ const SignIn = () => {
   };
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
       <div className="mx-auto bg-white items-center justify-center flex min-h-screen max-w-screen-2xl p-4 relative isolate">
         <svg className="w-[468px] h-[788px] sm:left-10 lg:left-20 absolute top-10 left-0 -z-10 transform-gpu overflow-hidden blur-2xl" viewBox="0 0 468 788" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="44.5105" cy="378.637" r="156.383" fill="#4A3AFF" />
@@ -117,7 +116,7 @@ const SignIn = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

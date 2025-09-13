@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -90,7 +91,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <Layout showNavbar={false}>
       <div className="flex-col flex">
         <div className="w-full border-b-2 border-gray-200"></div>
         <div className="bg-gray-50 flex overflow-x-hidden">
@@ -211,7 +212,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

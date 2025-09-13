@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@/components/ui/navbar';
+import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -65,8 +65,7 @@ const SignUp = () => {
   };
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
       <main className="w-full bg-white text-black relative isolate">
         <span className="h-full w-full items-center justify-center inline-flex absolute inset-0 -z-10 opacity-30 [mask-image:radial-gradient(100%_100%_at_bottom_left,white,transparent)]">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
@@ -177,7 +176,7 @@ const SignUp = () => {
           </div>
         </div>
       </main>
-    </div>
+    </Layout>
   );
 };
 
