@@ -1,8 +1,25 @@
 import { Link, useLocation } from "react-router-dom";
+import { Menu } from "lucide-react";
+import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 export const Navbar = () => {
   const location = useLocation();
   const isSignInPage = location.pathname === '/sign-in';
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const navigationItems = [
+    { label: "Home", path: "/" },
+    { label: "Add A Restaurant", path: "/" },
+    { label: "Contact Us", path: "/" },
+  ];
   
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
@@ -11,22 +28,63 @@ export const Navbar = () => {
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
             <img alt="ChowLocal" src="https://chowlocal.com/x/assets/images/chowlocallogo.png" className="w-12 md:w-16" />
           </div>
+          
+          {/* Desktop Navigation */}
           <div className="bg-white justify-end items-center md:flex flex flex-row flex-wrap hidden">
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
-              Home
-            </Link>
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
-              Add A Restaurant
-            </Link>
-            <Link to="/" className="text-gray-600 text-center mr-6 font-medium text-base font-raleway">
-              Contact Us
-            </Link>
+            {navigationItems.map((item) => (
+              <Link 
+                key={item.label}
+                to={item.path} 
+                className="text-gray-600 text-center mr-6 font-medium text-base font-raleway"
+              >
+                {item.label}
+              </Link>
+            ))}
             <Link 
               to={isSignInPage ? "/sign-up" : "/sign-in"} 
               className="h-9 w-24 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal"
             >
               {isSignInPage ? "Sign Up" : "Sign In"}
             </Link>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <button className="p-2 hover:bg-gray-100 rounded-lg">
+                  <Menu className="h-6 w-6 text-gray-600" />
+                  <span className="sr-only">Open menu</span>
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 sm:w-80">
+                <SheetHeader>
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col space-y-4 mt-6">
+                  {navigationItems.map((item) => (
+                    <SheetClose key={item.label} asChild>
+                      <Link 
+                        to={item.path}
+                        className="text-gray-600 hover:text-gray-900 font-medium text-lg py-2 px-4 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  <div className="pt-4 border-t">
+                    <SheetClose asChild>
+                      <Link 
+                        to={isSignInPage ? "/sign-up" : "/sign-in"} 
+                        className="w-full h-12 text-white bg-blue-700 hover:bg-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-base font-medium transition-colors"
+                      >
+                        {isSignInPage ? "Sign Up" : "Sign In"}
+                      </Link>
+                    </SheetClose>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
