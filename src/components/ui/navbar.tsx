@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { getLogoUrl } from "@/lib/cloudinary";
 import {
   Sheet,
   SheetContent,
@@ -26,7 +27,15 @@ export const Navbar = () => {
       <nav className="w-full">
         <div className="w-full justify-between mt-auto mr-auto mb-auto ml-auto md:flex-row flex max-w-screen-2xl">
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
-            <img alt="ChowLocal" src="https://chowlocal.com/x/assets/images/chowlocallogo.png" className="w-12 md:w-16" />
+            <img 
+              alt="ChowLocal" 
+              src={getLogoUrl('small')} 
+              className="w-12 md:w-16" 
+              onError={(e) => {
+                // Fallback to original logo if Cloudinary image fails to load
+                (e.target as HTMLImageElement).src = "https://chowlocal.com/x/assets/images/chowlocallogo.png";
+              }}
+            />
           </div>
           
           {/* Desktop Navigation */}
