@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { CityAutocomplete } from '@/components/ui/city-autocomplete';
 import { CityAutocomplete } from '@/components/ui/city-autocomplete';
 import { supabase } from '@/integrations/supabase/client';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { signUp } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -34,48 +31,32 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const { error } = await signUp(
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName,
-        formData.city,
-        formData.phoneNumber
-      );
+      // Send verification email WITHOUT creating account yet
+      const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
+        body: { 
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName
+        }
+      });
 
-      if (error) {
+      if (emailError) {
+        console.error('Error sending verification email:', emailError);
         toast({
           title: "Error",
-          description: error.message,
+          description: "Failed to send verification email. Please try again.",
           variant: "destructive",
         });
       } else {
-        // Send verification email
-        const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
-          body: { 
-            email: formData.email,
-            name: `${formData.firstName} ${formData.lastName}`
-          }
+        toast({
+          title: "Verification Email Sent",
+          description: "Please check your email for the verification code.",
         });
-
-        if (emailError) {
-          console.error('Error sending verification email:', emailError);
-          toast({
-            title: "Account Created",
-            description: "Account created but verification email failed to send. Please try signing in.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Success",
-            description: "Account created! Please check your email for verification code.",
-          });
-        }
         
-        // Navigate to verification page
+        // Navigate to verification page with all form data
         navigate('/verify-email', { 
           state: { 
-            email: formData.email 
+            formData: formData
           } 
         });
       }
