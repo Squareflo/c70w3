@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { getLogoUrl } from "@/lib/cloudinary";
-import { getLogoUrl } from "@/lib/cloudinaryUtils";
+import { getLogoUrl, createFallbackLogo } from "@/lib/cloudinaryUtils";
 import {
   Sheet,
   SheetContent,
@@ -12,7 +12,11 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-export default function Navigation() {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
   const location = useLocation();
@@ -20,28 +24,31 @@ export default function Navigation() {
   
   const navigationItems = [
     { label: "Home", path: "/" },
-    { label: "About", path: "/about" },
-    { label: "Contact", path: "/contact" }
+    { label: "Add A Restaurant", path: "/add-restaurant" },
+    { label: "Contact Us", path: "/contact" }
   ];
 
+  const handleLogoError = () => {
+    console.log('Logo failed to load, using fallback');
+    setLogoError(true);
+  };
+
   return (
+    <>
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
         <div className="w-full justify-between mt-auto mr-auto mb-auto ml-auto md:flex-row flex max-w-screen-2xl">
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
             {logoError ? (
-              <div className="w-12 md:w-16 h-12 md:h-16 flex items-center justify-center bg-red-600 text-white font-bold rounded">
-                Logo
+              <div className="w-12 md:w-16 h-12 md:h-16 flex items-center justify-center bg-red-600 text-white font-bold rounded-lg">
+                LOGO
               </div>
             ) : (
               <img 
                 alt="ChowLocal" 
-                src={getLogoUrl('medium')}
+                src={logoError ? createFallbackLogo(64, 64) : getLogoUrl('medium')}
                 className="w-12 md:w-16" 
-                onError={() => {
-                  console.error('Logo failed to load from Cloudinary');
-                  setLogoError(true);
-                }}
+                onError={handleLogoError}
               />
             )}
           </div>
@@ -59,7 +66,7 @@ export default function Navigation() {
             ))}
             <Link 
               to={isSignInPage ? "/sign-up" : "/sign-in"} 
-              className="h-9 w-24 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal"
+              className="h-9 w-24 text-white bg-red-600 hover:bg-red-700 hover:border-red-700 border-2 flex items-center justify-center text-center border-red-600 rounded-lg text-sm font-normal"
             >
               {isSignInPage ? "Sign Up" : "Sign In"}
             </Link>
@@ -106,5 +113,7 @@ export default function Navigation() {
         </div>
       </nav>
     </div>
+    {children}
+    </>
   );
-}
+};
