@@ -76,7 +76,7 @@ export const Navbar = () => {
                     <SheetClose asChild>
                       <Link 
                         to={isSignInPage ? "/sign-up" : "/sign-in"} 
-                        className="w-full h-12 text-white bg-blue-700 hover:bg-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-base font-medium transition-colors"
+                        className="w-full h-12 text-white bg-red-600 hover:bg-red-700 border-2 flex items-center justify-center text-center border-red-600 rounded-lg text-base font-medium transition-colors"
                       >
                         {isSignInPage ? "Sign Up" : "Sign In"}
                       </Link>
