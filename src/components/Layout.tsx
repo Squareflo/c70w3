@@ -13,6 +13,18 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
+const Navigation = () => {
+  const [logoError, setLogoError] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const isSignInPage = location.pathname === "/sign-in";
+  
+  const navigationItems = [
+    { label: "Home", path: "/" },
+    { label: "About", path: "/about" },
+    { label: "Contact", path: "/contact" }
+  ];
+
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
@@ -27,11 +39,6 @@ import {
                 alt="ChowLocal" 
                 src={getLogoUrl('medium')}
                 className="w-12 md:w-16" 
-                onError={() => {
-                  console.error('Logo failed to load from Cloudinary');
-                  setLogoError(true);
-                }}
-              />
                 onError={() => {
                   console.error('Logo failed to load from Cloudinary');
                   setLogoError(true);
