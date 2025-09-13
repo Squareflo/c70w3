@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { CityAutocomplete } from '@/components/ui/city-autocomplete';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -117,14 +118,11 @@ const SignUp = () => {
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
                   required
                 />
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="City"
+                <CityAutocomplete
                   value={formData.city}
-                  onChange={handleInputChange}
+                  onChange={(value) => setFormData(prev => ({ ...prev, city: value }))}
+                  placeholder="City"
                   className="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 focus:outline-none border-2 w-full rounded-lg bg-white"
-                  required
                 />
                 <input
                   type="email"
