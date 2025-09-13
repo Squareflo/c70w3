@@ -4,6 +4,7 @@ import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { CityAutocomplete } from '@/components/ui/city-autocomplete';
+import { supabase } from '@/integrations/supabase/client';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -48,11 +49,34 @@ const SignUp = () => {
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Success",
-          description: "Account created successfully!",
+        // Send verification email
+        const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
+          body: { 
+            email: formData.email,
+            name: `${formData.firstName} ${formData.lastName}`
+          }
         });
-        navigate('/dashboard');
+
+        if (emailError) {
+          console.error('Error sending verification email:', emailError);
+          toast({
+            title: "Account Created",
+            description: "Account created but verification email failed to send. Please try signing in.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success",
+            description: "Account created! Please check your email for verification code.",
+          });
+        }
+        
+        // Navigate to verification page
+        navigate('/verify-email', { 
+          state: { 
+            email: formData.email 
+          } 
+        });
       }
     } catch (error) {
       toast({
