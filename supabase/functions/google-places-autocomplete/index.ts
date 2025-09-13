@@ -23,7 +23,7 @@ serve(async (req) => {
 
     const apiKey = Deno.env.get('GOOGLE_PLACES_API_KEY')
     if (!apiKey) {
-      throw new Error('Google Places API key not configured')
+      throw new Error('Google Cloud API key not configured')
     }
 
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=(cities)&key=${apiKey}`
