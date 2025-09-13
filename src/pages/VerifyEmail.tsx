@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 const VerifyEmail = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { completeSignUp } = useAuth() as any; // Type assertion for completeSignUp
+  const { completeSignUp } = useAuth();
   const { toast } = useToast();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
