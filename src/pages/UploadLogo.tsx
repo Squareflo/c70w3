@@ -12,72 +12,19 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-  const checkCurrentLogo = () => {
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    if (cloudName) {
-      return `https://res.cloudinary.com/${cloudName}/image/upload/w_auto,q_auto,f_auto/chowlocal-logo`;
-    }
-    return null;
-  };
-
-  const isCloudinaryConfigured = () => {
-    return !!(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-  };
-
-  const handleUploadSuccess = (imageUrl: string, publicId: string) => {
-    setLogoUrl(imageUrl);
-    toast({
-      title: "Logo uploaded successfully!",
-      description: `Logo uploaded with public ID: ${publicId}`,
-    });
-  };
+export default function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+  const location = useLocation();
+  const isSignInPage = location.pathname === "/sign-in";
+  
+  const navigationItems = [
+    { label: "Home", path: "/" },
+    { label: "About", path: "/about" },
+    { label: "Contact", path: "/contact" }
+  ];
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md mx-auto">
-          <div className="bg-white shadow rounded-lg p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Upload ChowLocal Logo
-            </h1>
-            
-            {isCloudinaryConfigured() ? (
-              <div className="mb-6">
-                <CloudinaryImageUpload
-                  onUploadSuccess={handleUploadSuccess}
-                  folder="logos"
-                  maxSizeMB={2}
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-4"
-                />
-              </div>
-            ) : (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h3 className="text-sm font-medium text-yellow-800 mb-2">Cloudinary Not Configured</h3>
-                <p className="text-sm text-yellow-700">
-                  To enable logo uploads, you need to set up your Cloudinary environment variables:
-                </p>
-                <ul className="list-disc list-inside text-sm text-yellow-700 mt-2">
-                  <li>VITE_CLOUDINARY_CLOUD_NAME</li>
-                  <li>VITE_CLOUDINARY_UPLOAD_PRESET</li>
-                </ul>
-              </div>
-            )}
-
-            <div className="text-sm text-gray-600 mb-4">
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-900 mb-2">Debug Info:</h3>
-              <p className="text-xs text-gray-600 mb-2">
-                <strong>Cloudinary Cloud Name:</strong> {import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'Not set'}
-              </p>
-              <p className="text-xs text-gray-600 mb-2">
-                <strong>Upload Preset:</strong> {import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'Not set'}
-              </p>
-              <p className="text-xs text-gray-600 mb-2">
-                <strong>Configuration Status:</strong> {isCloudinaryConfigured() ? '✅ Configured' : '❌ Missing configuration'}
-              </p>
-              {checkCurrentLogo() && (
-                <div className="mt-2">
-                  <p className="text-xs text-gray-600 mb-1">Current logo URL:</p>
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
         <div className="w-full justify-between mt-auto mr-auto mb-auto ml-auto md:flex-row flex max-w-screen-2xl">
