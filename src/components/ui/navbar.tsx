@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getOptimizedImageUrl } from "@/lib/cloudinary";
 import {
   Sheet,
   SheetContent,
@@ -22,6 +21,19 @@ export const Navbar = () => {
     { label: "Contact Us", path: "/" },
   ];
   
+  // Debug function to check the Cloudinary URL
+  const getLogoUrl = () => {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    if (!cloudName) {
+      console.error('VITE_CLOUDINARY_CLOUD_NAME environment variable not set');
+      // Fallback to a simple test
+      return 'https://via.placeholder.com/64x64/ff0000/ffffff?text=LOGO';
+    }
+    const url = `https://res.cloudinary.com/${cloudName}/image/upload/w_64,h_64,q_auto,f_auto/chowlocal-logo`;
+    console.log('Logo URL:', url);
+    return url;
+  };
+  
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
@@ -29,8 +41,12 @@ export const Navbar = () => {
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
             <img 
               alt="ChowLocal" 
-              src={getOptimizedImageUrl('chowlocal-logo', { width: 64, height: 64, quality: 'auto', format: 'auto' })}
+              src={getLogoUrl()}
               className="w-12 md:w-16" 
+              onError={(e) => {
+                console.error('Logo failed to load:', e.currentTarget.src);
+                e.currentTarget.src = 'https://via.placeholder.com/64x64/ff0000/ffffff?text=LOGO';
+              }}
             />
           </div>
           

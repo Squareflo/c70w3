@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { CloudinaryImageUpload } from '@/components/CloudinaryImageUpload';
-import { getOptimizedImageUrl } from '@/lib/cloudinary';
 import { useToast } from '@/hooks/use-toast';
 import { Layout } from '@/components/Layout';
 
 const UploadLogo = () => {
   const { toast } = useToast();
   const [logoUrl, setLogoUrl] = useState<string>('');
+  
+  const checkCurrentLogo = () => {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    if (cloudName) {
+      return `https://res.cloudinary.com/${cloudName}/image/upload/w_auto,q_auto,f_auto/chowlocal-logo`;
+    }
+    return null;
+  };
 
   const handleUploadSuccess = (imageUrl: string, publicId: string) => {
     setLogoUrl(imageUrl);
@@ -49,6 +56,26 @@ const UploadLogo = () => {
                 <img src={logoUrl} alt="Uploaded logo" className="h-16 w-auto mx-auto" />
               </div>
             )}
+
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">Debug Info:</h3>
+              <p className="text-xs text-gray-600 mb-2">
+                <strong>Cloudinary Cloud Name:</strong> {import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'Not set'}
+              </p>
+              {checkCurrentLogo() && (
+                <div className="mt-2">
+                  <p className="text-xs text-gray-600 mb-1">Current logo URL:</p>
+                  <a 
+                    href={checkCurrentLogo()!} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 break-all"
+                  >
+                    {checkCurrentLogo()}
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
