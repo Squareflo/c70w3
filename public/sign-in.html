@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sign in — ChowLocal</title>
+  <meta name="description" content="Sign in to manage your ChowLocal account."/>
+  <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
+  <link rel="icon" href="/favicon.ico"/>
+  <link rel="stylesheet" href="/index.css"/>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+  <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
+    <h1 class="text-xl font-semibold mb-4">Sign in</h1>
+
+    <form id="signin-form" class="space-y-3">
+      <input id="email" type="email" required placeholder="Email"
+             class="w-full border rounded px-3 py-2"/>
+      <input id="password" type="password" required placeholder="Password"
+             class="w-full border rounded px-3 py-2"/>
+      <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
+        Sign in
+      </button>
+    </form>
+
+    <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
+  </main>
+
+  <!-- Load the shared sb client for HTML pages -->
+  <script src="/js/sb-client.js"></script>
+  <script>
+    // sb comes from /js/sb-client.js
+    const form = document.getElementById("signin-form");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.style.display = "none";
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        // Success → go to your dashboard (HTML or React route)
+        window.location.href = "/dashboard.html";
+      } catch (err) {
+        msg.textContent = err.message || "Failed to sign in.";
+        msg.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
