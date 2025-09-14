@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getLogoUrl } from "@/lib/cloudinaryUtils";
+import { getLogoUrl, createFallbackLogo } from "@/lib/cloudinaryUtils";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,6 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-// Navigation component (existing)
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
@@ -24,26 +23,29 @@ export default function Navigation() {
     { label: "Contact", path: "/contact" }
   ];
 
+  // Create a reliable logo URL with better fallback
+  const logoUrl = logoError ? createFallbackLogo(64, 64) : getLogoUrl('medium');
+
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
         <div className="w-full justify-between mt-auto mr-auto mb-auto ml-auto md:flex-row flex max-w-screen-2xl">
           <div className="justify-center items-center mb-2 md:m-0 flex flex-row">
-            {logoError ? (
-              <div className="w-12 md:w-16 h-12 md:h-16 flex items-center justify-center bg-red-600 text-white font-bold rounded">
-                Logo
-              </div>
-            ) : (
+            <Link to="/" className="flex items-center">
               <img 
                 alt="ChowLocal" 
-                src={getLogoUrl('medium')}
-                className="w-12 md:w-16" 
+                src={logoUrl}
+                className="w-12 md:w-16 h-12 md:h-16 object-contain" 
                 onError={() => {
-                  console.error('Logo failed to load from Cloudinary');
+                  console.log('Logo failed to load, switching to fallback');
                   setLogoError(true);
                 }}
+                onLoad={() => {
+                  // Reset error state if logo loads successfully
+                  if (logoError) setLogoError(false);
+                }}
               />
-            )}
+            </Link>
           </div>
           
           {/* Desktop Navigation */}
@@ -52,14 +54,14 @@ export default function Navigation() {
               <Link 
                 key={item.label}
                 to={item.path} 
-                className="text-gray-600 text-center mr-6 font-medium text-base font-raleway"
+                className="text-gray-600 text-center mr-6 font-medium text-base font-raleway hover:text-gray-900 transition-colors"
               >
                 {item.label}
               </Link>
             ))}
             <Link 
               to={isSignInPage ? "/sign-up" : "/sign-in"} 
-              className="h-9 w-24 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal"
+              className="h-9 px-6 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal transition-colors"
             >
               {isSignInPage ? "Sign Up" : "Sign In"}
             </Link>
@@ -93,7 +95,7 @@ export default function Navigation() {
                     <SheetClose asChild>
                       <Link 
                         to={isSignInPage ? "/sign-up" : "/sign-in"} 
-                        className="w-full h-12 text-white bg-red-600 hover:bg-red-700 border-2 flex items-center justify-center text-center border-red-600 rounded-lg text-base font-medium transition-colors"
+                        className="w-full h-12 text-white bg-blue-600 hover:bg-blue-700 border-2 flex items-center justify-center text-center border-blue-600 rounded-lg text-base font-medium transition-colors"
                       >
                         {isSignInPage ? "Sign Up" : "Sign In"}
                       </Link>
@@ -109,7 +111,7 @@ export default function Navigation() {
   );
 }
 
-// Layout component wrapper (what your pages expect)
+// Layout component wrapper
 interface LayoutProps {
   children: React.ReactNode;
 }
