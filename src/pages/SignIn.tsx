@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const SignIn = () => {
-  const navigate = useNavigate();
   const { signIn } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -40,7 +38,7 @@ const SignIn = () => {
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
-        navigate('/dashboard');
+        window.location.href = '/dashboard.html';
       }
     } catch (error) {
       toast({
@@ -106,12 +104,12 @@ const SignIn = () => {
           <div className="text-center mt-6">
             <p className="text-gray-600">
               Don't have an account?{' '}
-              <button
-                onClick={() => navigate('/sign-up')}
+              <a
+                href="/sign-up.html"
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
                 Sign Up
-              </button>
+              </a>
             </p>
           </div>
         </div>
