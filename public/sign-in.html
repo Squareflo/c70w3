@@ -23,49 +23,8 @@
       </button>
     </form>
 
-    <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
+    <p id="msg" class="text-sm mt-3 text-red-600 hidden"></p>
     <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
   </main>
 
-  <!-- Load Supabase CDN, then your shared client, then page logic -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/js/sb-client.js"></script>
-  <script>
-    const form  = document.getElementById("signin-form");
-    const msg   = document.getElementById("msg");
-    const debug = document.getElementById("debug");
-
-    function showError(label, error) {
-      const text = (error && error.message) ? error.message : String(error || "Unknown error");
-      msg.textContent = text;
-      msg.style.display = "block";
-      console.error(`[signin] ${label}:`, error);
-      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : text);
-    }
-
-    (async () => {
-      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not run");
-      const { data, error } = await sb.auth.getSession();
-      if (error) showError("getSession", error);
-      else console.log("[signin] initial session:", data?.session);
-    })();
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.style.display = "none";
-      debug.textContent = "";
-
-      const email = (document.getElementById("email")).value.trim();
-      const password = (document.getElementById("password")).value;
-
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) return showError("signInWithPassword", error);
-        window.location.href = "/dashboard.html";
-      } catch (err) {
-        showError("Unexpected", err);
-      }
-    });
-  </script>
-</body>
-</html>
+  <!-- Load Supabase CDN first, then the shared client
