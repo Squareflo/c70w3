@@ -1,45 +1,70 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign In - ChowLocal | Access Your Restaurant Account</title>
-    <meta name="description" content="Sign in to your ChowLocal account to manage your restaurant bookings, orders, and discover new local dining experiences.">
-    <meta name="keywords" content="restaurant login, sign in, local dining account, food delivery login">
-    <meta name="author" content="ChowLocal" />
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sign in — ChowLocal</title>
+  <meta name="description" content="Sign in to manage your ChowLocal account."/>
+  <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
+  <link rel="icon" href="/favicon.ico"/>
+  <link rel="stylesheet" href="/index.css"/>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+  <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
+    <h1 class="text-xl font-semibold mb-4">Sign in</h1>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://chowlocal.app/sign-in" />
-    <meta property="og:title" content="Sign In - ChowLocal" />
-    <meta property="og:description" content="Sign in to your ChowLocal account to access your restaurant bookings and orders." />
-    <meta property="og:image" content="https://chowlocal.app/og-signin.jpg" />
+    <form id="signin-form" class="space-y-3" autocomplete="on">
+      <input id="email" name="email" type="email" required placeholder="Email"
+             autocomplete="email" class="w-full border rounded px-3 py-2"/>
+      <input id="password" name="password" type="password" required placeholder="Password"
+             autocomplete="current-password" class="w-full border rounded px-3 py-2"/>
+      <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
+        Sign in
+      </button>
+    </form>
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://chowlocal.app/sign-in" />
-    <meta property="twitter:title" content="Sign In - ChowLocal" />
-    <meta property="twitter:description" content="Sign in to your ChowLocal account." />
-    <meta property="twitter:image" content="https://chowlocal.app/og-signin.jpg" />
+    <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
+    <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
+  </main>
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://chowlocal.app/sign-in" />
+  <!-- Use the single shared client (add a cache-buster to avoid stale script) -->
+  <script src="/js/sb-client.js?v=1"></script>
+  <script>
+    const form  = document.getElementById("signin-form");
+    const msg   = document.getElementById("msg");
+    const debug = document.getElementById("debug");
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Raleway:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" integrity="sha512-apX8rFN/KxJW8rniQbkvzrshQ3KvyEH+4szT3Sno5svdr6E/CP0QE862yEeLBMUnCqLko8QaugGkzvWS7uNfFQ==" crossorigin="anonymous">
-  </head>
+    function showError(label, error) {
+      const text = (error && error.message) ? error.message : String(error || "Unknown error");
+      msg.textContent = text;
+      msg.style.display = "block";
+      console.error(`[signin] ${label}:`, error);
+      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : text);
+    }
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/pages/sign-in.tsx"></script>
-  </body>
+    (async () => {
+      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not load");
+      const { data, error } = await sb.auth.getSession();
+      if (error) showError("getSession", error);
+      else console.log("[signin] initial session:", data?.session);
+    })();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.style.display = "none";
+      debug.textContent = "";
+
+      const email = (document.getElementById("email")).value.trim();
+      const password = (document.getElementById("password")).value;
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return showError("signInWithPassword", error);
+        window.location.href = "/dashboard.html";
+      } catch (err) {
+        showError("Unexpected", err);
+      }
+    });
+  </script>
+</body>
 </html>
