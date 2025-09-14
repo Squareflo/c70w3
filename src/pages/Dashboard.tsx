@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { SidebarNav } from '@/components/SidebarNav';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '../../integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
