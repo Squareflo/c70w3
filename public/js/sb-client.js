@@ -2,7 +2,7 @@
 <script>
   (function initSb() {
     const SUPABASE_URL = "https://yihfsdfaobxpoqaghnul.supabase.co";
-    const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_ANON_KEY"; // must be the real anon key
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpaGZzZGZhb2J4cG9xYWdobnVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTE3NDgsImV4cCI6MjA3MzM2Nzc0OH0.FTyOvpYlb_6EiZnSe3S29vkbmIyw0ayHJHN6Gjt6_zw"; // must be the real anon key
 
     if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes("REPLACE_WITH")) {
       console.error("[sb-client] Missing anon key in /public/js/sb-client.js");
