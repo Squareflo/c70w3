@@ -1,183 +1,72 @@
-const generateAvatar = async (): Promise<string> => {
-  // Simply return the static avatar URL
-  return 'https://avatar.iran.liara.run/public';
-};
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+// src/contexts/AuthContext.tsx
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import type { Session, User } from "@supabase/supabase-js";
 
-
-interface AuthContextType {
+type AuthContextValue = {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, firstName: string, lastName: string, city: string, phoneNumber: string) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
+
+const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  session: null,
+  loading: true,
+  signOut: async () => {},
+});
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // initial load
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user);
-        setSession(session);
-        setUser(session?.user ?? null);
+    let isMounted = true;
+
+    (async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (isMounted) {
+        setSession(data.session ?? null);
+        setUser(data.session?.user ?? null);
         setLoading(false);
       }
-    );
+      if (error) {
+        console.error("getSession error:", error);
+      }
+    })();
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    // subscribe to auth changes
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
-  // Generate a random avatar using the API
-  const generateAvatar = async (): Promise<string> => {
-    try {
-      // Generate a random username for the avatar
-      const randomUsername = Math.random().toString(36).substring(2, 15);
-      const avatarUrl = `https://avatar-placeholder.iran.liara.run/document?username=${randomUsername}`;
-      return avatarUrl;
-    } catch (error) {
-      console.error('Error generating avatar:', error);
-      // Fallback to a default avatar URL
-      return `https://avatar-placeholder.iran.liara.run/document?username=user`;
-    }
-  };
-
-  // Ensure a profile row exists for the authenticated user
-  const ensureProfile = async (u: User) => {
-    try {
-      const { data: existing, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('user_id', u.id)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error('Error checking profile:', checkError);
-        return;
-      }
-
-      if (!existing) {
-        const meta = (u as any).user_metadata || {};
-        const avatarUrl = await generateAvatar();
-        
-        const { error: insertError } = await supabase.from('profiles').insert({
-          user_id: u.id,
-          email: u.email,
-          first_name: meta.first_name ?? null,
-          last_name: meta.last_name ?? null,
-          city: meta.city ?? null,
-          phone_number: meta.phone_number ?? null,
-          avatar_url: avatarUrl,
-        });
-        if (insertError) {
-          console.error('Error creating profile:', insertError);
-        }
-      }
-    } catch (e) {
-      console.error('Unexpected error ensuring profile:', e);
-    }
-  };
-
-  // When the auth user is available, ensure their profile exists
-  useEffect(() => {
-    if (!loading && user) {
-      setTimeout(() => ensureProfile(user), 0);
-    }
-  }, [user, loading]);
-
-  const signUp = async (email: string, password: string, firstName: string, lastName: string, city: string, phoneNumber: string) => {
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            city,
-            phone_number: phoneNumber
-          }
-        }
-      });
-
-      if (error) {
-        console.error('Sign up error:', error);
-        return { error: error as Error };
-      }
-
-      return { error: null };
-    } catch (error) {
-      console.error('Error during sign up:', error);
-      return { error: error as Error };
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error('Sign in error:', error);
-        return { error: error as Error };
-      }
-
-      return { error: null };
-    } catch (error) {
-      console.error('Error signing in:', error);
-      return { error: error as Error };
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Sign out error:', error);
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
-  const value = {
-    user,
-    session,
-    loading,
-    signUp,
-    signIn,
-    signOut
-  };
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user,
+      session,
+      loading,
+      signOut: async () => {
+        await supabase.auth.signOut();
+        // if your app uses hard links, redirect:
+        // window.location.href = "/sign-in";
+      },
+    }),
+    [user, session, loading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
