@@ -1,39 +1,3 @@
-// Add this debugging code to your VerifyEmailPage.tsx handleVerificationSubmit function
-// Right before the verification request
-
-const requestBody = { 
-  email: formData.email,
-  code: verificationCode,
-  userData: {
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    city: formData.city,
-    phoneNumber: formData.phoneNumber,
-    password: formData.password
-  }
-};
-
-console.log('Debug - Form data from sessionStorage:', formData);
-console.log('Debug - Request body being sent:', {
-  email: requestBody.email,
-  code: requestBody.code,
-  userData: { ...requestBody.userData, password: '[REDACTED]' }
-});
-
-// Verify all required fields are present
-const requiredFields = ['firstName', 'lastName', 'city', 'phoneNumber', 'password'];
-const missingFields = requiredFields.filter(field => !formData[field]);
-if (missingFields.length > 0) {
-  console.error('Missing required fields:', missingFields);
-  toast({
-    title: "Missing Information",
-    description: `Missing: ${missingFields.join(', ')}`,
-    variant: "destructive",
-  });
-  return;
-}
-
-
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import { useToast } from '@/hooks/use-toast';
@@ -73,19 +37,42 @@ const VerifyEmailPage = () => {
     setLoading(true);
 
     try {
+      // Add debugging code here (moved inside the function)
+      const requestBody = { 
+        email: formData.email,
+        code: verificationCode,
+        userData: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          city: formData.city,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password
+        }
+      };
+
+      console.log('Debug - Form data from sessionStorage:', formData);
+      console.log('Debug - Request body being sent:', {
+        email: requestBody.email,
+        code: requestBody.code,
+        userData: { ...requestBody.userData, password: '[REDACTED]' }
+      });
+
+      // Verify all required fields are present
+      const requiredFields = ['firstName', 'lastName', 'city', 'phoneNumber', 'password'];
+      const missingFields = requiredFields.filter(field => !formData[field]);
+      if (missingFields.length > 0) {
+        console.error('Missing required fields:', missingFields);
+        toast({
+          title: "Missing Information",
+          description: `Missing: ${missingFields.join(', ')}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Verify the code AND create the user account
       const { error: verifyError } = await supabase.functions.invoke('verify-email-code', {
-        body: { 
-          email: formData.email,
-          code: verificationCode,
-          userData: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            city: formData.city,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password
-          }
-        }
+        body: requestBody
       });
 
       if (verifyError) {
@@ -255,4 +242,3 @@ const VerifyEmailPage = () => {
 };
 
 export default VerifyEmailPage;
-
