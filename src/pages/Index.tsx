@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 
 const Index = () => {
@@ -13,22 +12,23 @@ const Index = () => {
             Discover amazing local restaurants and connect with your community through food.
           </p>
           <div className="space-x-4">
-            <Link 
-              to="/sign-up" 
+            <a 
+              href="/sign-up.html" 
               className="bg-blue-700 hover:bg-blue-900 text-white px-8 py-3 rounded-lg text-lg font-medium inline-block transition-colors"
             >
               Get Started
-            </Link>
-            <Link 
-              to="/sign-in" 
+            </a>
+            <a 
+              href="/sign-in.html" 
               className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-8 py-3 rounded-lg text-lg font-medium inline-block transition-colors"
             >
               Sign In
-            </Link>
+            </a>
           </div>
         </div>
       </div>
     </Layout>
   );
 };
+
 export default Index;
