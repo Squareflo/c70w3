@@ -95,7 +95,20 @@ const SignIn = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="p-3 w-full bg-black text-white rounded-lg mt-2 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-raleway"
+                className="p-3 w-full text-white rounded-lg mt-2 disabled:opacity-50 disabled:cursor-not-allowed font-raleway transition-colors"
+                style={{
+                  backgroundColor: loading ? '#D1171E' : '#EC1D25',
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading) {
+                    e.currentTarget.style.backgroundColor = '#D1171E';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading) {
+                    e.currentTarget.style.backgroundColor = '#EC1D25';
+                  }
+                }}
               >
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>
