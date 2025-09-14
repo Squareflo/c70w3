@@ -15,6 +15,13 @@ const corsHeaders = {
 interface VerifyCodeRequest {
   email: string;
   code: string;
+  userData?: {
+    firstName: string;
+    lastName: string;
+    city: string;
+    phoneNumber: string;
+    password: string;
+  };
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,7 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, code }: VerifyCodeRequest = await req.json();
+    const { email, code, userData }: VerifyCodeRequest = await req.json();
 
     if (!email || !code) {
       throw new Error("Email and code are required");
@@ -57,10 +64,33 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Failed to verify code");
     }
 
+    // If userData is provided, create the user account
+    if (userData) {
+      // Create the user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: email,
+        password: userData.password,
+        email_confirm: true, // This is key - it marks the email as confirmed
+        user_metadata: {
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          city: userData.city,
+          phone_number: userData.phoneNumber
+        }
+      });
+
+      if (authError) {
+        console.error("Error creating user:", authError);
+        throw new Error(`Failed to create user: ${authError.message}`);
+      }
+
+      console.log("User created successfully:", authData.user?.id);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: "Email verified successfully" 
+        message: userData ? "Email verified and account created successfully" : "Email verified successfully"
       }),
       {
         status: 200,
