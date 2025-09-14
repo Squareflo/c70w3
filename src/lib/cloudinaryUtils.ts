@@ -10,23 +10,18 @@ export interface CloudinaryResponse {
   format: string;
 }
 
-// Generate logo URL with fallback
+// Generate logo URL - now points to your actual logo
 export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
   const dimensions = {
-    small: { w: 32, h: 32 },
-    medium: { w: 64, h: 64 },
-    large: { w: 128, h: 128 }
+    small: { w: 32 },
+    medium: { w: 64 },
+    large: { w: 128 }
   };
 
-  const { w, h } = dimensions[size];
+  const { w } = dimensions[size];
   
-  try {
-    // Try to load from Cloudinary first
-    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${w},h_${h},q_auto,f_auto/chowlocal-logo`;
-  } catch (error) {
-    console.error('Error generating Cloudinary URL:', error);
-    return createFallbackLogo(w, h);
-  }
+  // Use your actual logo from Cloudinary with auto height to maintain aspect ratio
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${w},h_auto,q_auto,f_auto/chowlocal-logo`;
 };
 
 // Create a reliable SVG fallback logo
