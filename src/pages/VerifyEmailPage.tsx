@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const VerifyEmailPage = () => {
-  const { signUp } = useAuth();
   const { toast } = useToast();
   
   const [verificationCode, setVerificationCode] = useState('');
@@ -39,37 +37,25 @@ const VerifyEmailPage = () => {
     setLoading(true);
 
     try {
-      // First verify the code
+      // Verify the code AND create the user account
       const { error: verifyError } = await supabase.functions.invoke('verify-email-code', {
         body: { 
           email: formData.email,
-          code: verificationCode
+          code: verificationCode,
+          userData: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            city: formData.city,
+            phoneNumber: formData.phoneNumber,
+            password: formData.password
+          }
         }
       });
 
       if (verifyError) {
         toast({
-          title: "Invalid Code",
-          description: "The verification code is invalid or expired. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Code is valid, now create the account
-      const { error: signUpError } = await signUp(
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName,
-        formData.city,
-        formData.phoneNumber
-      );
-
-      if (signUpError) {
-        toast({
-          title: "Account Creation Failed",
-          description: signUpError.message,
+          title: "Error",
+          description: verifyError.message || "Failed to verify email or create account.",
           variant: "destructive",
         });
         return;
@@ -85,6 +71,7 @@ const VerifyEmailPage = () => {
       window.location.href = '/signup-success.html';
 
     } catch (error) {
+      console.error('Verification error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
