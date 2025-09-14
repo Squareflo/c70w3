@@ -74,9 +74,28 @@ const handler = async (req: Request): Promise<Response> => {
     if (userData) {
       console.log('Creating user account...');
       
-      // Generate a random avatar URL
-      const randomUsername = Math.random().toString(36).substring(2, 15);
-      const avatarUrl = `https://avatar-placeholder.iran.liara.run/document?username=${randomUsername}`;
+      // Generate avatar URL using user data
+      const generateAvatar = (firstName?: string, lastName?: string): string => {
+        try {
+          if (firstName && lastName) {
+            const initials = `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+            return `https://avatar-placeholder.iran.liara.run/initials?username=${initials}`;
+          }
+          
+          if (firstName) {
+            return `https://avatar-placeholder.iran.liara.run/document?username=${firstName.toLowerCase()}`;
+          }
+          
+          const randomUsername = Math.random().toString(36).substring(2, 15);
+          return `https://avatar-placeholder.iran.liara.run/document?username=${randomUsername}`;
+        } catch (error) {
+          console.error('Error generating avatar:', error);
+          return `https://avatar-placeholder.iran.liara.run/document?username=user`;
+        }
+      };
+
+      const avatarUrl = generateAvatar(userData.firstName, userData.lastName);
+      console.log('Generated avatar URL:', avatarUrl);
 
       // Create the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -98,25 +117,46 @@ const handler = async (req: Request): Promise<Response> => {
 
       console.log("User created successfully:", authData.user?.id);
 
-      // Create the profile record manually since the trigger might not fire for admin-created users
+      // Wait a moment for the trigger to create the basic profile
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Update the profile with complete information (instead of inserting)
       if (authData.user) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
-            user_id: authData.user.id,
+          .update({
             email: authData.user.email,
             first_name: userData.firstName,
             last_name: userData.lastName,
             city: userData.city,
             phone_number: userData.phoneNumber,
             avatar_url: avatarUrl,
-          });
+          })
+          .eq('user_id', authData.user.id);
 
         if (profileError) {
-          console.error("Error creating profile:", profileError);
-          // Don't throw here - user account is created, profile creation is secondary
+          console.error("Error updating profile:", profileError);
+          
+          // If update failed, try to insert (in case trigger didn't fire)
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              user_id: authData.user.id,
+              email: authData.user.email,
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              city: userData.city,
+              phone_number: userData.phoneNumber,
+              avatar_url: avatarUrl,
+            });
+          
+          if (insertError) {
+            console.error("Error inserting profile:", insertError);
+          } else {
+            console.log("Profile inserted successfully with avatar:", avatarUrl);
+          }
         } else {
-          console.log("Profile created successfully");
+          console.log("Profile updated successfully with avatar:", avatarUrl);
         }
       }
     }
