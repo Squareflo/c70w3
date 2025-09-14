@@ -20,6 +20,10 @@ export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
 
   const { w } = dimensions[size];
   
+  // Remove h_auto and just use width scaling
+  return `https://res.cloudinary.com/chowlocal/image/upload/w_${w},q_auto,f_auto/chowlocal-logo`;
+};
+  
   // Use your actual logo from Cloudinary with auto height to maintain aspect ratio
   return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${w},h_auto,q_auto,f_auto/chowlocal-logo`;
 };
