@@ -16,6 +16,12 @@ interface SidebarNavProps {
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ profile, onSignOut }) => {
+  // Fallback avatar if user doesn't have one or if it fails to load
+  const fallbackAvatar = "https://avatar-placeholder.iran.liara.run/document?username=user";
+  
+  // Use the user's avatar or fallback
+  const avatarUrl = profile?.avatarUrl || fallbackAvatar;
+
   return (
     <div className="bg-white md:w-64 md:flex-col custom:flex hidden">
       <div className="h-full pt-5 flex-col flex overflow-y-auto">
@@ -27,16 +33,36 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ profile, onSignOut }) =>
                 <div className="justify-between items-center flex">
                   <div className="w-fit rounded-full mr-3 relative">
                     <img 
-                      alt="User Avatar" 
-                      src={profile?.avatarUrl || "https://avatar-placeholder.iran.liara.run/document?username=user"} 
-                      className="object-cover h-10 w-10 rounded-full"
+                      alt={`${profile?.firstName || 'User'} Avatar`}
+                      src={avatarUrl}
+                      className="object-cover h-10 w-10 rounded-full border-2 border-gray-200"
+                      onError={(e) => {
+                        // If the user's avatar fails to load, fallback to default
+                        const target = e.target as HTMLImageElement;
+                        if (target.src !== fallbackAvatar) {
+                          target.src = fallbackAvatar;
+                        }
+                      }}
+                      onLoad={() => {
+                        // Optional: Add a subtle animation when avatar loads
+                        const target = event?.target as HTMLImageElement;
+                        if (target) {
+                          target.style.opacity = '0';
+                          target.style.transition = 'opacity 0.3s ease-in-out';
+                          setTimeout(() => {
+                            target.style.opacity = '1';
+                          }, 100);
+                        }
+                      }}
                     />
+                    {/* Optional: Online status indicator */}
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                   </div>
                   <div className="mr-auto ml-0">
                     <p className="font-bold text-base">
                       {profile?.firstName} {profile?.lastName}
                     </p>
-                    <p className="text-sm">{profile?.email}</p>
+                    <p className="text-sm text-gray-600">{profile?.email}</p>
                   </div>
                 </div>
               </div>
