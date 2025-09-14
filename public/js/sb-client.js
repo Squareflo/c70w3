@@ -1,3 +1,4 @@
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // Shared Supabase client for all static HTML pages.
