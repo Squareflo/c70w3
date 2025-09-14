@@ -29,7 +29,7 @@ const SignUpPage = () => {
     setLoading(true);
 
     try {
-      // Send verification email WITHOUT creating account yet
+      // Only send verification email - don't create user yet
       const { error: emailError } = await supabase.functions.invoke('send-verification-email', {
         body: { 
           email: formData.email,
@@ -170,7 +170,7 @@ const SignUpPage = () => {
                     }
                   }}
                 >
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? 'Sending Verification...' : 'Send Verification Code'}
                 </button>
               </div>
             </form>
