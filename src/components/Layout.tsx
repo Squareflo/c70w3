@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getLogoUrl, createFallbackLogo } from "@/lib/cloudinaryUtils";
+import { getLogoUrl } from "@/lib/cloudinaryUtils";
 import {
   Sheet,
   SheetContent,
@@ -13,7 +13,6 @@ import {
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const [logoError, setLogoError] = useState(false);
   const location = useLocation();
   const isSignInPage = location.pathname === "/sign-in";
   
@@ -23,9 +22,6 @@ export default function Navigation() {
     { label: "Contact", path: "/contact" }
   ];
 
-  // Create a reliable logo URL with better fallback
-  const logoUrl = logoError ? createFallbackLogo(64, 64) : getLogoUrl('medium');
-
   return (
     <div className="bg-white pt-4 pr-8 pb-4 pl-8">
       <nav className="w-full">
@@ -34,16 +30,8 @@ export default function Navigation() {
             <Link to="/" className="flex items-center">
               <img 
                 alt="ChowLocal" 
-                src={logoUrl}
-                className="w-12 md:w-16 h-12 md:h-16 object-contain" 
-                onError={() => {
-                  console.log('Logo failed to load, switching to fallback');
-                  setLogoError(true);
-                }}
-                onLoad={() => {
-                  // Reset error state if logo loads successfully
-                  if (logoError) setLogoError(false);
-                }}
+                src={getLogoUrl('medium')}
+                className="w-12 md:w-16 h-auto object-contain" 
               />
             </Link>
           </div>
