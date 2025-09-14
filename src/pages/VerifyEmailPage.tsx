@@ -184,7 +184,20 @@ const VerifyEmailPage = () => {
               <button
                 type="submit"
                 disabled={loading || verificationCode.length !== 6}
-                className="p-3 w-full bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-raleway"
+                className="p-3 w-full text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-raleway transition-colors"
+                style={{
+                  backgroundColor: (loading || verificationCode.length !== 6) ? '#D1171E' : '#EC1D25',
+                }}
+                onMouseEnter={(e) => {
+                  if (!loading && verificationCode.length === 6) {
+                    e.currentTarget.style.backgroundColor = '#D1171E';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!loading && verificationCode.length === 6) {
+                    e.currentTarget.style.backgroundColor = '#EC1D25';
+                  }
+                }}
               >
                 {loading ? 'Verifying...' : 'Verify & Create Account'}
               </button>
