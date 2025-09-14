@@ -12,7 +12,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    // MUST match public/js/sb-client.js
-    storageKey: "sb-chowlocal-auth",
+    storageKey: "sb-chowlocal-auth", // MUST match /public/js/sb-client.js
   },
 });
