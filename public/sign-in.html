@@ -7,8 +7,12 @@
   <meta name="description" content="Sign in to manage your ChowLocal account."/>
   <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
   <link rel="icon" href="/favicon.ico"/>
-  <!-- Use the same stylesheet your other pages use -->
+
+  <!-- Your site CSS (currently 404, keep it; we add Tailwind below as a safety net) -->
   <link rel="stylesheet" href="/index.css"/>
+
+  <!-- Fallback styling so the page isn’t naked while /index.css is 404 -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
   <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
@@ -18,7 +22,7 @@
       <input id="email" name="email" type="email" required placeholder="Email"
              autocomplete="email" class="w-full border rounded px-3 py-2"/>
       <input id="password" name="password" type="password" required placeholder="Password"
-             autocomplete="current-password" class="w-full border rounded px-3 py-2"/>
+             autocomplete="current-password" className="w-full border rounded px-3 py-2"/>
       <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
         Sign in
       </button>
@@ -30,7 +34,7 @@
 
   <!-- Load Supabase CDN first, then your shared client, then page code -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/js/sb-client.js?v=3"></script>
+  <script src="/js/sb-client.js?v=4"></script>
   <script>
     const form  = document.getElementById("signin-form");
     const msg   = document.getElementById("msg");
@@ -45,7 +49,9 @@
     }
 
     (async () => {
-      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not run");
+      if (!window.supabase) return showError("Init", "Supabase CDN missing");
+      if (!window.sb)       return showError("Init", "window.sb is undefined — /js/sb-client.js did not run");
+
       const { data, error } = await sb.auth.getSession();
       if (error) showError("getSession", error);
       else console.log("[signin] initial session:", data?.session);
