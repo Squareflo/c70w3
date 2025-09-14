@@ -12,34 +12,8 @@ export interface CloudinaryResponse {
 
 // Generate logo URL - now points to your actual logo
 export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
-  const dimensions = {
-    small: { w: 32 },
-    medium: { w: 64 },
-    large: { w: 128 }
-  };
-
-  const { w } = dimensions[size];
-  
-  // Remove h_auto and just use width scaling
-  return `https://res.cloudinary.com/chowlocal/image/upload/w_${w},q_auto,f_auto/chowlocal-logo`;
-};
-  
-  // Use your actual logo from Cloudinary with auto height to maintain aspect ratio
-  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${w},h_auto,q_auto,f_auto/chowlocal-logo`;
-};
-
-// Create a reliable SVG fallback logo
-export const createFallbackLogo = (width: number = 64, height: number = 64) => {
-  const svg = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${width}" height="${height}" fill="#dc2626" rx="8"/>
-      <text x="50%" y="50%" text-anchor="middle" dy="0.35em" fill="white" font-family="Arial, sans-serif" font-size="${Math.round(width * 0.3)}" font-weight="bold">
-        LOGO
-      </text>
-    </svg>
-  `;
-  
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
+  // Just return the basic URL that works for now
+  return `https://res.cloudinary.com/chowlocal/image/upload/chowlocal-logo`;
 };
 
 // Upload image to Cloudinary
