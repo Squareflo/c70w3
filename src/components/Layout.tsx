@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getLogoUrl } from "@/lib/cloudinary";
 import { getLogoUrl } from "@/lib/cloudinaryUtils";
 import {
   Sheet,
@@ -12,6 +11,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
+// Navigation component (existing)
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
@@ -108,3 +108,17 @@ export default function Navigation() {
     </div>
   );
 }
+
+// Layout component wrapper (what your pages expect)
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      {children}
+    </div>
+  );
+};
