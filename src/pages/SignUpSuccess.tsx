@@ -37,7 +37,16 @@ const SignUpSuccess = () => {
           <div className="space-y-4">
             <button
               onClick={() => window.location.href = '/sign-in.html'}
-              className="p-3 w-full bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-raleway"
+              className="p-3 w-full text-white rounded-lg transition-colors font-raleway"
+              style={{
+                backgroundColor: '#EC1D25',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#D1171E';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#EC1D25';
+              }}
             >
               Sign In to Your Account
             </button>
