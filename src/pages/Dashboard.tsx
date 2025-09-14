@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { SidebarNav } from '@/components/SidebarNav';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,7 +16,6 @@ interface UserProfile {
 }
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -25,9 +23,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/sign-in');
+      window.location.href = '/sign-in.html';
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
   useEffect(() => {
     if (user) {
@@ -92,7 +90,7 @@ const Dashboard = () => {
         title: "Signed Out",
         description: "You have been successfully signed out.",
       });
-      navigate('/');
+      window.location.href = '/';
     } catch (error) {
       toast({
         title: "Error",
