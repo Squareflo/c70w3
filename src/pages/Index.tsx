@@ -14,7 +14,16 @@ const Index = () => {
           <div className="space-x-4">
             <a 
               href="/sign-up.html" 
-              className="bg-blue-700 hover:bg-blue-900 text-white px-8 py-3 rounded-lg text-lg font-medium inline-block transition-colors"
+              className="text-white px-8 py-3 rounded-lg text-lg font-medium inline-block transition-colors"
+              style={{
+                backgroundColor: '#EC1D25',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#D1171E';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#EC1D25';
+              }}
             >
               Get Started
             </a>
