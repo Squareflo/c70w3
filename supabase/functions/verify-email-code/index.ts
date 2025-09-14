@@ -72,7 +72,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     // If userData is provided, create the user account
     if (userData) {
-      console.log('Creating user account...');
+      console.log('Creating user account with data:', {
+        email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        city: userData.city,
+        phoneNumber: userData.phoneNumber
+      });
       
       // Generate avatar URL using user data
       const generateAvatar = (firstName?: string, lastName?: string): string => {
@@ -117,46 +123,74 @@ const handler = async (req: Request): Promise<Response> => {
 
       console.log("User created successfully:", authData.user?.id);
 
-      // Wait a moment for the trigger to create the basic profile
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Update the profile with complete information (instead of inserting)
       if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            email: authData.user.email,
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            city: userData.city,
-            phone_number: userData.phoneNumber,
-            avatar_url: avatarUrl,
-          })
-          .eq('user_id', authData.user.id);
+        // Wait a moment for any triggers to fire
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        if (profileError) {
-          console.error("Error updating profile:", profileError);
-          
-          // If update failed, try to insert (in case trigger didn't fire)
-          const { error: insertError } = await supabase
+        // Check if profile already exists
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', authData.user.id)
+          .single();
+
+        const profileData = {
+          user_id: authData.user.id,
+          email: authData.user.email,
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          city: userData.city,
+          phone_number: userData.phoneNumber,
+          avatar_url: avatarUrl,
+        };
+
+        console.log('Profile data to save:', profileData);
+
+        if (existingProfile) {
+          // Update existing profile
+          const { error: updateProfileError } = await supabase
             .from('profiles')
-            .insert({
-              user_id: authData.user.id,
+            .update({
               email: authData.user.email,
               first_name: userData.firstName,
               last_name: userData.lastName,
               city: userData.city,
               phone_number: userData.phoneNumber,
               avatar_url: avatarUrl,
-            });
-          
-          if (insertError) {
-            console.error("Error inserting profile:", insertError);
+            })
+            .eq('user_id', authData.user.id);
+
+          if (updateProfileError) {
+            console.error("Error updating profile:", updateProfileError);
+            throw new Error(`Failed to update profile: ${updateProfileError.message}`);
           } else {
-            console.log("Profile inserted successfully with avatar:", avatarUrl);
+            console.log("Profile updated successfully with all fields");
           }
         } else {
-          console.log("Profile updated successfully with avatar:", avatarUrl);
+          // Insert new profile
+          const { error: insertProfileError } = await supabase
+            .from('profiles')
+            .insert(profileData);
+
+          if (insertProfileError) {
+            console.error("Error inserting profile:", insertProfileError);
+            throw new Error(`Failed to create profile: ${insertProfileError.message}`);
+          } else {
+            console.log("Profile created successfully with all fields");
+          }
+        }
+
+        // Verify the profile was saved correctly
+        const { data: savedProfile, error: fetchError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', authData.user.id)
+          .single();
+
+        if (fetchError) {
+          console.error("Error fetching saved profile:", fetchError);
+        } else {
+          console.log("Saved profile verification:", savedProfile);
         }
       }
     }
