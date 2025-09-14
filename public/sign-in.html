@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,40 +13,71 @@
   <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
     <h1 class="text-xl font-semibold mb-4">Sign in</h1>
 
-    <form id="signin-form" class="space-y-3">
+    <form id="signin-form" class="space-y-3" autocomplete="on">
       <input id="email" type="email" required placeholder="Email"
-             class="w-full border rounded px-3 py-2"/>
+             class="w-full border rounded px-3 py-2" />
       <input id="password" type="password" required placeholder="Password"
-             class="w-full border rounded px-3 py-2"/>
+             class="w-full border rounded px-3 py-2" />
       <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
         Sign in
       </button>
     </form>
 
     <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
+
+    <!-- Debug area (shows details if something fails) -->
+    <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
   </main>
 
-  <!-- Load the shared sb client for HTML pages -->
+  <!-- Load the shared client -->
   <script src="/js/sb-client.js"></script>
   <script>
-    // sb comes from /js/sb-client.js
     const form = document.getElementById("signin-form");
     const msg = document.getElementById("msg");
+    const debug = document.getElementById("debug");
+
+    // Utility to show + log any errors
+    function showError(label, error) {
+      const text = (error?.message || error || "Unknown error");
+      msg.textContent = text;
+      msg.style.display = "block";
+      console.error(`[signin] ${label}:`, error);
+      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : String(error));
+    }
+
+    // Sanity checks before submit
+    (async () => {
+      if (!window.sb) {
+        showError("Client init", "window.sb is undefined — /js/sb-client.js not loaded?");
+        return;
+      }
+      const { data, error } = await sb.auth.getSession();
+      if (error) {
+        showError("getSession", error);
+      } else {
+        console.log("[signin] current session:", data?.session);
+      }
+    })();
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msg.style.display = "none";
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      debug.textContent = "";
 
       try {
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        // Success → go to your dashboard (HTML or React route)
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) return showError("Validation", "Email and password are required");
+
+        console.log("[signin] attempting password sign-in for", email);
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return showError("signInWithPassword", error);
+
+        console.log("[signin] success:", data?.user?.id);
         window.location.href = "/dashboard.html";
       } catch (err) {
-        msg.textContent = err.message || "Failed to sign in.";
-        msg.style.display = "block";
+        showError("Unexpected", err);
       }
     });
   </script>
