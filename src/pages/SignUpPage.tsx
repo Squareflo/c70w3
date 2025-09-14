@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { useToast } from '@/hooks/use-toast';
 import { CityAutocomplete } from '@/components/ui/city-autocomplete';
-import { supabase } from '../../integrations/supabase/client';
+import { supabase } from "@/lib/supabase";
 
 const SignUpPage = () => {
   const { toast } = useToast();
