@@ -49,7 +49,19 @@ export default function Navigation() {
             ))}
             <a 
               href={isSignInPage ? "/sign-up.html" : "/sign-in.html"} 
-              className="h-9 px-6 text-white bg-blue-700 hover:bg-blue-900 hover:border-blue-900 border-2 flex items-center justify-center text-center border-blue-700 rounded-lg text-sm font-normal transition-colors"
+              className="h-9 px-6 text-white border-2 flex items-center justify-center text-center rounded-lg text-sm font-normal transition-colors"
+              style={{
+                backgroundColor: '#EC1D25',
+                borderColor: '#EC1D25',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#D1171E';
+                e.currentTarget.style.borderColor = '#D1171E';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#EC1D25';
+                e.currentTarget.style.borderColor = '#EC1D25';
+              }}
             >
               {isSignInPage ? "Sign Up" : "Sign In"}
             </a>
@@ -83,7 +95,19 @@ export default function Navigation() {
                     <SheetClose asChild>
                       <a 
                         href={isSignInPage ? "/sign-up.html" : "/sign-in.html"} 
-                        className="w-full h-12 text-white bg-blue-600 hover:bg-blue-700 border-2 flex items-center justify-center text-center border-blue-600 rounded-lg text-base font-medium transition-colors"
+                        className="w-full h-12 text-white border-2 flex items-center justify-center text-center rounded-lg text-base font-medium transition-colors"
+                        style={{
+                          backgroundColor: '#EC1D25',
+                          borderColor: '#EC1D25',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#D1171E';
+                          e.currentTarget.style.borderColor = '#D1171E';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#EC1D25';
+                          e.currentTarget.style.borderColor = '#EC1D25';
+                        }}
                       >
                         {isSignInPage ? "Sign Up" : "Sign In"}
                       </a>
