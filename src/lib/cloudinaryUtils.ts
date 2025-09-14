@@ -13,7 +13,7 @@ export interface CloudinaryResponse {
 // Generate logo URL - fixed to work with your Cloudinary setup
 export const getLogoUrl = (size: 'small' | 'medium' | 'large' = 'medium') => {
   const dimensions = {
-    small: { w: 32 },
+    small: { w: 64 },
     medium: { w: 64 },
     large: { w: 128 }
   };
