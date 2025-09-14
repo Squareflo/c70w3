@@ -15,9 +15,12 @@ const VerifyEmailPage = () => {
     // Get form data from sessionStorage
     const storedData = sessionStorage.getItem('signupFormData');
     if (storedData) {
-      setFormData(JSON.parse(storedData));
+      const parsedData = JSON.parse(storedData);
+      console.log('Retrieved form data:', parsedData);
+      setFormData(parsedData);
     } else {
       // If no form data, redirect back to sign up
+      console.log('No form data found, redirecting to signup');
       window.location.href = '/sign-up.html';
     }
   }, []);
@@ -34,33 +37,46 @@ const VerifyEmailPage = () => {
       return;
     }
 
+    console.log('Starting verification with code:', verificationCode);
     setLoading(true);
 
     try {
       // Verify the code AND create the user account
-      const { error: verifyError } = await supabase.functions.invoke('verify-email-code', {
-        body: { 
-          email: formData.email,
-          code: verificationCode,
-          userData: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            city: formData.city,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password
-          }
+      const requestBody = { 
+        email: formData.email,
+        code: verificationCode,
+        userData: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          city: formData.city,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password
         }
+      };
+
+      console.log('Sending verification request:', {
+        email: requestBody.email,
+        code: requestBody.code,
+        userData: { ...requestBody.userData, password: '[REDACTED]' }
       });
 
+      const { data, error: verifyError } = await supabase.functions.invoke('verify-email-code', {
+        body: requestBody
+      });
+
+      console.log('Verification response:', { data, error: verifyError });
+
       if (verifyError) {
+        console.error('Verification error:', verifyError);
         toast({
-          title: "Error",
+          title: "Verification Failed",
           description: verifyError.message || "Failed to verify email or create account.",
           variant: "destructive",
         });
         return;
       }
 
+      console.log('Verification successful');
       toast({
         title: "Success!",
         description: "Your email has been verified and account created successfully.",
@@ -68,7 +84,11 @@ const VerifyEmailPage = () => {
 
       // Clear stored data and navigate to success page
       sessionStorage.removeItem('signupFormData');
-      window.location.href = '/signup-success.html';
+      
+      // Add a small delay to ensure the toast is shown
+      setTimeout(() => {
+        window.location.href = '/signup-success.html';
+      }, 1500);
 
     } catch (error) {
       console.error('Verification error:', error);
@@ -186,7 +206,7 @@ const VerifyEmailPage = () => {
                   }
                 }}
               >
-                {loading ? 'Verifying...' : 'Verify & Create Account'}
+                {loading ? 'Creating Account...' : 'Verify & Create Account'}
               </button>
             </div>
           </form>
