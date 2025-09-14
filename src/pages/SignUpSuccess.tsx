@@ -1,10 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 
 const SignUpSuccess = () => {
-  const navigate = useNavigate();
-
   return (
     <Layout>
       <div className="mx-auto bg-white items-center justify-center flex min-h-screen max-w-screen-2xl p-4 relative isolate">
@@ -39,13 +36,13 @@ const SignUpSuccess = () => {
           
           <div className="space-y-4">
             <button
-              onClick={() => navigate('/sign-in')}
+              onClick={() => window.location.href = '/sign-in.html'}
               className="p-3 w-full bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-raleway"
             >
               Sign In to Your Account
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => window.location.href = '/'}
               className="p-3 w-full border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Back to Home
