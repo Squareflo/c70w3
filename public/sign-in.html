@@ -14,56 +14,40 @@
     <h1 class="text-xl font-semibold mb-4">Sign in</h1>
 
     <form id="signin-form" class="space-y-3" autocomplete="on">
-      <input id="email" type="email" required placeholder="Email"
-             class="w-full border rounded px-3 py-2" />
-      <input id="password" type="password" required placeholder="Password"
-             class="w-full border rounded px-3 py-2" />
+      <input id="email" name="email" type="email" required placeholder="Email"
+             autocomplete="email" class="w-full border rounded px-3 py-2"/>
+      <input id="password" name="password" type="password" required placeholder="Password"
+             autocomplete="current-password" class="w-full border rounded px-3 py-2"/>
       <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
         Sign in
       </button>
     </form>
 
     <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
-
-    <!-- Debug area (shows details if something fails) -->
     <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
   </main>
 
+  <!-- Load Supabase CDN, then your shared client, then page logic -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/js/sb-client.js"></script>
-<script>
-  // your page code can now use `sb`
-  // e.g., sb.auth.signInWithPassword(...)
-</script>
-
-  <!-- Load the shared client -->
   <script src="/js/sb-client.js"></script>
   <script>
-    const form = document.getElementById("signin-form");
-    const msg = document.getElementById("msg");
+    const form  = document.getElementById("signin-form");
+    const msg   = document.getElementById("msg");
     const debug = document.getElementById("debug");
 
-    // Utility to show + log any errors
     function showError(label, error) {
-      const text = (error?.message || error || "Unknown error");
+      const text = (error && error.message) ? error.message : String(error || "Unknown error");
       msg.textContent = text;
       msg.style.display = "block";
       console.error(`[signin] ${label}:`, error);
-      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : String(error));
+      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : text);
     }
 
-    // Sanity checks before submit
     (async () => {
-      if (!window.sb) {
-        showError("Client init", "window.sb is undefined — /js/sb-client.js not loaded?");
-        return;
-      }
+      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not run");
       const { data, error } = await sb.auth.getSession();
-      if (error) {
-        showError("getSession", error);
-      } else {
-        console.log("[signin] current session:", data?.session);
-      }
+      if (error) showError("getSession", error);
+      else console.log("[signin] initial session:", data?.session);
     })();
 
     form.addEventListener("submit", async (e) => {
@@ -71,17 +55,12 @@
       msg.style.display = "none";
       debug.textContent = "";
 
+      const email = (document.getElementById("email")).value.trim();
+      const password = (document.getElementById("password")).value;
+
       try {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        if (!email || !password) return showError("Validation", "Email and password are required");
-
-        console.log("[signin] attempting password sign-in for", email);
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) return showError("signInWithPassword", error);
-
-        console.log("[signin] success:", data?.user?.id);
         window.location.href = "/dashboard.html";
       } catch (err) {
         showError("Unexpected", err);
