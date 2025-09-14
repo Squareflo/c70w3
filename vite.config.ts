@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => ({
         'verify-email': resolve(__dirname, 'verify-email.html'),
         'signup-success': resolve(__dirname, 'signup-success.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
-        'upload-logo': resolve(__dirname, 'upload-logo.html'),
       }
     }
   }
