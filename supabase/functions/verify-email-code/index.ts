@@ -33,6 +33,8 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { email, code, userData }: VerifyCodeRequest = await req.json();
 
+    console.log('Verify request received:', { email, code, hasUserData: !!userData });
+
     if (!email || !code) {
       throw new Error("Email and code are required");
     }
@@ -49,6 +51,8 @@ const handler = async (req: Request): Promise<Response> => {
       .limit(1)
       .single();
 
+    console.log('Verification check:', { verificationData, verificationError });
+
     if (verificationError || !verificationData) {
       throw new Error("Invalid or expired verification code");
     }
@@ -64,13 +68,21 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Failed to verify code");
     }
 
+    console.log('Code verified successfully');
+
     // If userData is provided, create the user account
     if (userData) {
+      console.log('Creating user account...');
+      
+      // Generate a random avatar URL
+      const randomUsername = Math.random().toString(36).substring(2, 15);
+      const avatarUrl = `https://avatar-placeholder.iran.liara.run/document?username=${randomUsername}`;
+
       // Create the user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: email,
         password: userData.password,
-        email_confirm: true, // This is key - it marks the email as confirmed
+        email_confirm: true, // This marks the email as confirmed
         user_metadata: {
           first_name: userData.firstName,
           last_name: userData.lastName,
@@ -85,6 +97,28 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       console.log("User created successfully:", authData.user?.id);
+
+      // Create the profile record manually since the trigger might not fire for admin-created users
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: authData.user.id,
+            email: authData.user.email,
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            city: userData.city,
+            phone_number: userData.phoneNumber,
+            avatar_url: avatarUrl,
+          });
+
+        if (profileError) {
+          console.error("Error creating profile:", profileError);
+          // Don't throw here - user account is created, profile creation is secondary
+        } else {
+          console.log("Profile created successfully");
+        }
+      }
     }
 
     return new Response(
