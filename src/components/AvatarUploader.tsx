@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -49,7 +48,8 @@ export default function AvatarUploader({ size = 56, circle = true, currentUrl }:
       const token = sessionData.session.access_token;
       const uid = sessionData.session.user.id;
 
-      // 2) Request signed upload params from Edge Function (requires Bearer token)
+      // 2) Request signed upload params from Edge Function
+      console.log("Calling edge function:", `${edgeBase}/cloudinary-signature`);
       const res = await fetch(`${edgeBase}/cloudinary-signature`, {
         method: "POST",
         headers: {
@@ -57,8 +57,7 @@ export default function AvatarUploader({ size = 56, circle = true, currentUrl }:
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          folder: `users/${uid}`, // server also forces users/<uid>, this is just explicit
-          // optional: eager: "c_fill,w_320,h_320,q_auto:good"
+          folder: `users/${uid}`, // server also forces users/<uid>
         }),
       });
       if (!res.ok) throw new Error(`Signature request failed (${res.status})`);
@@ -93,7 +92,7 @@ export default function AvatarUploader({ size = 56, circle = true, currentUrl }:
         .eq("id", uid);
       if (updErr) throw updErr;
 
-      // Clear preview (parent can re-fetch or you can keep optimistic preview)
+      // Clear preview (parent can re-fetch, or you can keep optimistic preview)
       setPreview(null);
     } catch (e: any) {
       console.error(e);
@@ -101,7 +100,7 @@ export default function AvatarUploader({ size = 56, circle = true, currentUrl }:
     } finally {
       setBusy(false);
       // Clean up object URL and reset input so same file can be picked again
-      if (localUrl) URL.revokeObjectURL(localUrl);
+      if (preview) URL.revokeObjectURL(preview);
       if (inputRef.current) inputRef.current.value = "";
     }
   }
