@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
   <link rel="icon" href="/favicon.ico"/>
 
-  <!-- Your site CSS (currently 404 on /index.css). Keep it, but also add Tailwind CDN as a fallback. -->
+  <!-- Remove the broken CSS line and use Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -32,7 +32,7 @@
   <!-- IMPORTANT: Load Supabase CDN FIRST -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Then load your shared client (add cache buster) -->
+  <!-- Then load your shared client -->
   <script src="/js/sb-client.js?v=5"></script>
 
   <!-- Page logic -->
@@ -50,10 +50,17 @@
     }
 
     (async () => {
+      // Wait a moment for sb-client.js to initialize
+      let attempts = 0;
+      while (!window.sb && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      
       if (!window.supabase) return showError("Init", "Supabase CDN missing");
-      if (!window.sb)       return showError("Init", "window.sb is undefined — /js/sb-client.js did not run");
+      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not load");
 
-      const { data, error } = await sb.auth.getSession();
+      const { data, error } = await window.sb.auth.getSession();
       if (error) showError("getSession", error);
       else console.log("[signin] initial session:", data?.session);
     })();
@@ -67,7 +74,7 @@
       const password = document.getElementById("password").value;
 
       try {
-        const { error } = await sb.auth.signInWithPassword({ email, password });
+        const { error } = await window.sb.auth.signInWithPassword({ email, password });
         if (error) return showError("signInWithPassword", error);
         window.location.href = "/dashboard.html";
       } catch (err) {
