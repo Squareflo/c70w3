@@ -9,7 +9,7 @@
     <meta name="keywords" content="sign in, login, chowlocal account, restaurant app, local dining" />
     <meta name="author" content="ChowLocal" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://chowlocal.app/sign-in" />
     <meta property="og:title" content="Sign In - ChowLocal | Access Your Account" />
@@ -23,10 +23,10 @@
     <meta property="twitter:description" content="Sign in to manage your ChowLocal account." />
     <meta property="twitter:image" content="https://chowlocal.app/og-signup.jpg" />
 
-    <!-- Canonical URL (match sign-up style: no .html) -->
+    <!-- Canonical -->
     <link rel="canonical" href="https://chowlocal.app/sign-in" />
 
-    <!-- Google Fonts (match sign-up exactly) -->
+    <!-- Google Fonts (match sign-up) -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
@@ -34,9 +34,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Raleway:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
 
-    <!-- Font Awesome (match sign-up exactly) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" integrity="sha512-apX8rFN/KxJW8rniQbkvzrshQ3KvyEH+4szT3Sno5svdr6E/CP0QE862yEeLBMUnCqLko8QaugGkzvWS7uNfFQ==" crossorigin="anonymous">
+    <!-- Font Awesome (match sign-up) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css"
+          integrity="sha512-apX8rFN/KxJW8rniQbkvzrshQ3KvyEH+4szT3Sno5svdr6E/CP0QE862yEeLBMUnCqLko8QaugGkzvWS7uNfFQ=="
+          crossorigin="anonymous">
+
+    <!-- SITE STYLES: use EXACTLY the same CSS as sign-up/index -->
+    <link rel="stylesheet" href="/src/index.css" />
   </head>
 
   <body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -57,9 +64,9 @@
       <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
     </main>
 
-    <!-- Supabase (same order we fixed earlier) -->
+    <!-- Supabase: CDN first, then your singleton -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/sb-client.js?v=11"></script>
+    <script src="/js/sb-client.js?v=12"></script>
     <script>
       const form  = document.getElementById("signin-form");
       const msg   = document.getElementById("msg");
