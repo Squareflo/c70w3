@@ -7,7 +7,9 @@
   <meta name="description" content="Sign in to manage your ChowLocal account."/>
   <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
   <link rel="icon" href="/favicon.ico"/>
-  <link rel="stylesheet" href="/index.css"/>
+  
+  <!-- Tailwind CSS as LINK not SCRIPT -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
   <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
@@ -23,41 +25,57 @@
       </button>
     </form>
 
-    <p id="msg" class="text-sm mt-3 text-red-600" style="display:none"></p>
+    <p id="msg" class="text-sm mt-3 text-red-600 hidden"></p>
     <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
   </main>
 
-  <!-- IMPORTANT: Load Supabase CDN first -->
+  <!-- Load Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Then your shared client (add a cache-buster so the new file is used) -->
-  <script src="/js/sb-client.js?v=8"></script>
 
+  <!-- Initialize Supabase inline -->
   <script>
-    const form  = document.getElementById("signin-form");
-    const msg   = document.getElementById("msg");
+    const { createClient } = supabase;
+    const SUPABASE_URL = "https://yihfsdfaobxpoqaghnul.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpaGZzZGZhb2J4cG9xYWdobnVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTE3NDgsImV4cCI6MjA3MzM2Nzc0OH0.FTyOvpYlb_6EiZnSe3S29vkbmIyw0ayHJHN6Gjt6_zw";
+    
+    window.sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        storageKey: "sb-chowlocal-auth",
+      },
+    });
+  </script>
+
+  <!-- Page logic -->
+  <script>
+    const form = document.getElementById("signin-form");
+    const msg = document.getElementById("msg");
     const debug = document.getElementById("debug");
 
     function showError(label, error) {
       const text = (error && error.message) ? error.message : String(error || "Unknown error");
       msg.textContent = text;
-      msg.style.display = "block";
+      msg.classList.remove("hidden");
       console.error(`[signin] ${label}:`, error);
-      debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : text);
     }
 
-    (async () => {
-      if (!window.supabase) return showError("Init", "Supabase CDN missing");
-      if (!window.sb)       return showError("Init", "window.sb is undefined — /js/sb-client.js did not load");
+    // Check Supabase on page load
+    window.addEventListener('load', async () => {
+      if (!window.sb) return showError("Init", "Supabase client not initialized");
 
-      const { data, error } = await window.sb.auth.getSession();
-      if (error) showError("getSession", error);
-      else console.log("[signin] initial session:", data?.session);
-    })();
+      try {
+        const { data, error } = await window.sb.auth.getSession();
+        if (error) showError("getSession", error);
+        else console.log("[signin] Ready!");
+      } catch (err) {
+        showError("getSession", err);
+      }
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      msg.style.display = "none";
-      debug.textContent = "";
+      msg.classList.add("hidden");
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
