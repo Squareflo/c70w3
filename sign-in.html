@@ -1,93 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Sign in — ChowLocal</title>
-  <meta name="description" content="Sign in to manage your ChowLocal account."/>
-  <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
-  <link rel="icon" href="/favicon.ico"/>
-  
-  <!-- Tailwind CSS as LINK not SCRIPT -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-  <main class="w-full max-w-sm bg-white rounded-xl shadow p-6">
-    <h1 class="text-xl font-semibold mb-4">Sign in</h1>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Sign in — ChowLocal</title>
+    <meta name="description" content="Sign in to manage your ChowLocal account."/>
+    <link rel="canonical" href="https://chowlocal.app/sign-in.html"/>
+    <link rel="icon" href="/favicon.ico"/>
 
-    <form id="signin-form" class="space-y-3" autocomplete="on">
-      <input id="email" name="email" type="email" required placeholder="Email"
-             autocomplete="email" class="w-full border rounded px-3 py-2"/>
-      <input id="password" name="password" type="password" required placeholder="Password"
-             autocomplete="current-password" class="w-full border rounded px-3 py-2"/>
-      <button id="submit" type="submit" class="w-full rounded bg-black text-white py-2">
-        Sign in
-      </button>
-    </form>
+    <!-- Fonts & Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <!-- Nav -->
+    <div class="bg-white pt-4 pr-8 pb-4 pl-8">
+      <nav class="w-full">
+        <div class="w-full justify-between flex max-w-screen-2xl mx-auto">
+          <div class="flex flex-row items-center">
+            <img alt="ChowLocal logo" src="https://chowlocal.com/x/assets/images/chowlocallogo.png" class="w-12 md:w-16">
+          </div>
+          <div class="bg-white justify-end items-center md:flex hidden flex-row flex-wrap">
+            <a href="/" class="text-gray-600 text-center mr-6 font-medium text-base">Home</a>
+            <a href="/add-restaurant.html" class="text-gray-600 text-center mr-6 font-medium text-base">Add A Restaurant</a>
+            <a href="/contact.html" class="text-gray-600 text-center mr-6 font-medium text-base">Contact Us</a>
+            <a href="/sign-up.html" class="text-gray-600 text-center mr-6 font-medium text-base">Sign Up</a>
+            <button class="hover:bg-blue-900 border-2 border-red-600 h-9 w-24 text-white bg-red-600 flex items-center justify-center rounded-lg text-lg">Sign In</button>
+          </div>
+        </div>
+      </nav>
+    </div>
 
-    <p id="msg" class="text-sm mt-3 text-red-600 hidden"></p>
-    <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
-  </main>
+    <!-- Background + Form -->
+    <div class="mx-auto bg-white items-center justify-center flex min-h-screen max-w-screen-2xl p-4 relative isolate">
+      <svg class="w-[468px] h-[788px] absolute top-10 left-0 -z-10 blur-2xl" viewBox="0 0 468 788" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="44.5" cy="378.6" r="156.4" fill="#4A3AFF"/>
+        <circle cx="119.8" cy="529.2" r="156.4" fill="#702DFF"/>
+        <circle cx="173.4" cy="372.9" r="156.4" fill="#2D5BFF"/>
+        <g filter="url(#filter0_b)">
+          <circle cx="73.5" cy="394.0" r="393.8" fill="white" fill-opacity="0.79"/>
+        </g>
+        <defs>
+          <filter id="filter0_b" x="-460" y="-140" width="1068" height="1068" filterUnits="userSpaceOnUse">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="70"/>
+          </filter>
+        </defs>
+      </svg>
 
-  <!-- Load Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <div class="w-full p-8 max-w-lg relative isolate">
+        <p class="text-center text-4xl font-bold tracking-tight mb-10">Sign In</p>
+        <form id="signin-form" class="mt-10">
+          <div class="space-y-5">
+            <input type="email" id="email" name="email" required placeholder="Email or Phone #"
+              class="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 outline-none w-full rounded-lg bg-white"/>
+            <input type="password" id="password" name="password" required placeholder="Password"
+              class="border border-gray-200 p-3 focus:ring-1 focus:ring-gray-600 outline-none w-full rounded-lg bg-white"/>
+            <button type="submit" class="p-3 w-full bg-black text-white rounded-lg mt-2 font-semibold">
+              Sign In
+            </button>
+          </div>
+          <p class="text-center mt-6">
+            <a href="/forgot-password.html" class="font-black underline">I forgot my password</a>
+          </p>
+          <p class="text-center mt-6">
+            Don't have an account?
+            <a href="/sign-up.html" class="font-black underline">Sign Up</a>
+          </p>
+        </form>
 
-  <!-- Initialize Supabase inline -->
-  <script>
-    const { createClient } = supabase;
-    const SUPABASE_URL = "https://yihfsdfaobxpoqaghnul.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpaGZzZGZhb2J4cG9xYWdobnVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTE3NDgsImV4cCI6MjA3MzM2Nzc0OH0.FTyOvpYlb_6EiZnSe3S29vkbmIyw0ayHJHN6Gjt6_zw";
-    
-    window.sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        storageKey: "sb-chowlocal-auth",
-      },
-    });
-  </script>
+        <!-- Error/debug messages -->
+        <p id="msg" class="text-sm mt-3 text-red-600 hidden"></p>
+        <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
+      </div>
+    </div>
 
-  <!-- Page logic -->
-  <script>
-    const form = document.getElementById("signin-form");
-    const msg = document.getElementById("msg");
-    const debug = document.getElementById("debug");
+    <!-- Supabase client + logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/sb-client.js?v=7"></script>
+    <script>
+      const form = document.getElementById("signin-form");
+      const msg  = document.getElementById("msg");
+      const debug= document.getElementById("debug");
 
-    function showError(label, error) {
-      const text = (error && error.message) ? error.message : String(error || "Unknown error");
-      msg.textContent = text;
-      msg.classList.remove("hidden");
-      console.error(`[signin] ${label}:`, error);
-    }
-
-    // Check Supabase on page load
-    window.addEventListener('load', async () => {
-      if (!window.sb) return showError("Init", "Supabase client not initialized");
-
-      try {
-        const { data, error } = await window.sb.auth.getSession();
-        if (error) showError("getSession", error);
-        else console.log("[signin] Ready!");
-      } catch (err) {
-        showError("getSession", err);
+      function showError(label, error) {
+        const text = (error && error.message) ? error.message : String(error || "Unknown error");
+        msg.textContent = text;
+        msg.classList.remove("hidden");
+        console.error(`[signin] ${label}:`, error);
+        debug.textContent = `[signin] ${label}:\n` + (typeof error === "object" ? JSON.stringify(error, null, 2) : text);
       }
-    });
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.classList.add("hidden");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        msg.classList.add("hidden");
+        debug.textContent = "";
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
 
-      try {
-        const { error } = await window.sb.auth.signInWithPassword({ email, password });
-        if (error) return showError("signInWithPassword", error);
-        window.location.href = "/dashboard.html";
-      } catch (err) {
-        showError("Unexpected", err);
-      }
-    });
-  </script>
-</body>
+        try {
+          const { error } = await window.sb.auth.signInWithPassword({ email, password });
+          if (error) return showError("signInWithPassword", error);
+          window.location.href = "/dashboard.html";
+        } catch (err) {
+          showError("Unexpected", err);
+        }
+      });
+    </script>
+  </body>
 </html>
