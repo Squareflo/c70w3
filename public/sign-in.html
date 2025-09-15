@@ -32,8 +32,15 @@
   <!-- IMPORTANT: Load Supabase CDN FIRST -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- Debug: Check if sb-client.js loads -->
+  <script>
+    console.log('[DEBUG] About to load sb-client.js');
+  </script>
+
   <!-- Then load your shared client -->
-  <script src="/js/sb-client.js?v=5"></script>
+  <script src="/js/sb-client.js?v=6" 
+          onerror="console.error('[DEBUG] Failed to load sb-client.js')"
+          onload="console.log('[DEBUG] sb-client.js loaded successfully')"></script>
 
   <!-- Page logic -->
   <script>
