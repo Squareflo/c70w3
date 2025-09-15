@@ -27,8 +27,11 @@
     <pre id="debug" class="text-xs text-gray-600 mt-4 whitespace-pre-wrap"></pre>
   </main>
 
-  <!-- Use the single shared client (add a cache-buster to avoid stale script) -->
-  <script src="/js/sb-client.js?v=1"></script>
+  <!-- IMPORTANT: Load Supabase CDN first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Then your shared client (add a cache-buster so the new file is used) -->
+  <script src="/js/sb-client.js?v=8"></script>
+
   <script>
     const form  = document.getElementById("signin-form");
     const msg   = document.getElementById("msg");
@@ -43,8 +46,10 @@
     }
 
     (async () => {
-      if (!window.sb) return showError("Init", "window.sb is undefined — /js/sb-client.js did not load");
-      const { data, error } = await sb.auth.getSession();
+      if (!window.supabase) return showError("Init", "Supabase CDN missing");
+      if (!window.sb)       return showError("Init", "window.sb is undefined — /js/sb-client.js did not load");
+
+      const { data, error } = await window.sb.auth.getSession();
       if (error) showError("getSession", error);
       else console.log("[signin] initial session:", data?.session);
     })();
@@ -54,11 +59,11 @@
       msg.style.display = "none";
       debug.textContent = "";
 
-      const email = (document.getElementById("email")).value.trim();
-      const password = (document.getElementById("password")).value;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
       try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        const { error } = await window.sb.auth.signInWithPassword({ email, password });
         if (error) return showError("signInWithPassword", error);
         window.location.href = "/dashboard.html";
       } catch (err) {
